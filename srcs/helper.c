@@ -5,76 +5,75 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/18 02:14:43 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/18 02:32:16 by dpinto           ###   ########.fr       */
+/*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
+/*   Updated: 2025/05/26 01:24:04 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
-
-char	*input_to_str(char *filename)
-{
-	int		fd;
-	int		count;
-	char	buf[50];
-	char	*str;
-	char	*tmp;
-
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
-		return (ft_putstr_fd("Error\nfailed to open file\n", 2), NULL);
-	str = ft_strdup("\0");
-	if (str == NULL)
-		return (NULL);
-	count = 1;
-	while (count != 0)
-	{
-		count = read(fd, buf, 49);
-		if (count == -1)
-			return (free(str), NULL);
-		buf[count] = '\0';
-		tmp = str;
-		str = ft_strjoin(str, buf);
-		free(tmp);
-	}
-	close(fd);
-	return (str);
-}
-
-int	check_ext(char *filename)
-{
-	int	len;
-
-	len = ft_strlen(filename);
-	if (len < 5)
-		return (1);
-	if (ft_strncmp(filename + (len - 4), ".cub", 4) != 0)
-		return (1);
-	if (ft_strncmp(filename + (len - 5), "/.cub", 5) == 0)
-		return (1);
-	return (0);
-}
+#include "../includes/cube3d.h"
 
 size_t	get_tab_len(char **tab)
 {
 	size_t	i;
 
 	i = 0;
-	while (tab[i] != NULL)
+	while (tab[i])
 		i++;
 	return (i);
 }
 
 char	**free_strs(char **strs)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
-	while (strs[i] != NULL)
+	while (strs[i])
 	{
 		free(strs[i]);
 		i++;
 	}
 	free(strs);
 	return (NULL);
+}
+
+void	init_fields(t_fields *fields)
+{
+	fields->no_filename = NULL;
+	fields->so_filename = NULL;
+	fields->we_filename = NULL;
+	fields->ea_filename = NULL;
+	fields->floor[0] = -1;
+	fields->floor[1] = -1;
+	fields->floor[2] = -1;
+	fields->core[0] = -1;
+	fields->core[1] = -1;
+	fields->core[2] = -1;
+	fields->map = NULL;
+	fields->mlx = NULL;
+	fields->win = NULL;
+}
+
+void	free_fields(t_fields *fields)
+{
+	if (fields->no_filename)
+		free(fields->no_filename);
+	if (fields->so_filename)
+		free(fields->so_filename);
+	if (fields->we_filename)
+		free(fields->we_filename);
+	if (fields->ea_filename)
+		free(fields->ea_filename);
+	if (fields->map)
+	{
+		if (fields->map->grid)
+			free_strs(fields->map->grid);
+		free(fields->map);
+	}
+	if (fields->win && fields->mlx)
+		mlx_destroy_window(fields->mlx, fields->win);
+	if (fields->mlx)
+	{
+		mlx_destroy_display(fields->mlx);
+		free(fields->mlx);
+	}
 }

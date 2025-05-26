@@ -1,40 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 02:48:29 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/25 01:59:29 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 
-int	main(int argc, char **argv)
+int	parse_map(char **tab, int start_idx, t_fields *fields)
 {
-	t_fields	fields;
-
-	if (argc != 2)
-	{
-		ft_putstr_fd("Error\nUsage: ./cub3D <map.cub>\n", 2);
+	fields->map = malloc(sizeof(t_map));
+	if (!fields->map)
 		return (1);
-	}
-	init_fields(&fields);
-	if (parse(argv[1], &fields))
-	{
-		ft_putstr_fd("Error\nInvalid map!\n", 2);
-		free_fields(&fields);
+	if (get_map_dimensions(tab, start_idx, fields->map))
 		return (1);
-	}
-	print_fields(&fields);
-	if (init_window(&fields))
-	{
-		free_fields(&fields);
+	if (copy_map(tab, start_idx, fields->map))
 		return (1);
-	}
-	mlx_loop(fields.mlx);
-	free_fields(&fields);
+	if (check_map_chars(fields->map))
+		return (1);
+	if (validate_map(fields->map))
+		return (1);
 	return (0);
 }

@@ -6,45 +6,58 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/05/18 06:15:21 by dpinto           ###   ########.fr        #
+#    Updated: 2025/05/26 02:29:25 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= cube3D
-CC		= cc
-#CFLAGS	= -Wall -Wextra -Werror
+NAME = cub3D
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -g
+MLX_FLAGS = -Lmlx -lmlx -L/usr/lib -lXext -lX11 -lm
 
-LIBFT_DIR	= libft
-MLX_DIR		= mlx
-INCLUDE_DIR	= includes
+SRCS = srcs/main.c \
+       srcs/parse.c \
+       srcs/parse_fields.c \
+       srcs/parse_map.c \
+       srcs/map_check.c \
+       srcs/map_utils.c \
+       srcs/validate.c \
+       srcs/validate_walls.c \
+       srcs/helper.c \
+       srcs/file_utils.c \
+       srcs/print_fields.c \
+       srcs/window.c \
+       srcs/cleanup.c \
+       srcs/parse_fields_utils2.c
 
-SRCS_DIR	= srcs
-SRCS		= $(addprefix $(SRCS_DIR)/, main.c parse.c helper.c print_fields.c)
-OBJS		= $(SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o)
+
+LIBFT = libft/libft.a
+MLX = mlx/libmlx.a
 
 all: $(NAME)
 
-$(MLX_DIR)/libmlx.a:
-	@make -s -C $(MLX_DIR)
+$(NAME): $(OBJS) $(LIBFT) $(MLX)
+	$(CC) $(OBJS) $(LIBFT) $(MLX_FLAGS) -o $(NAME)
 
-$(LIBFT_DIR)/libft.a:
-	@make -s -C $(LIBFT_DIR)
+$(LIBFT):
+	make -C libft
 
-$(NAME): $(OBJS) $(LIBFT_DIR)/libft.a $(MLX_DIR)/libmlx.a
-	$(CC) $(CFLAGS) $(OBJS) -Lmlx -lmlx -Llibft -lft -lXext -lX11 -o $(NAME)
+$(MLX):
+	make -C mlx
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -I$(INCLUDE_DIR) -I$(LIBFT_DIR) -I$(MLX_DIR) -o $@
+%.o: %.c includes/cube3d.h
+	$(CC) $(CFLAGS) -I includes -c $< -o $@
 
 clean:
-	@make -s -C $(LIBFT_DIR) clean
-	@rm -f $(OBJS)
-	@make -s -C $(MLX_DIR) clean
+	rm -f $(OBJS)
+	make -C libft clean
+	make -C mlx clean
 
 fclean: clean
-	@make -s -C $(LIBFT_DIR) fclean
-	@rm -f $(NAME)
+	rm -f $(NAME)
+	make -C libft fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re MLX LIBFT
+.PHONY: all clean fclean re

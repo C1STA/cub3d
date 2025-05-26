@@ -1,40 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 02:48:29 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/26 02:54:20 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 
-int	main(int argc, char **argv)
+void	cleanup_mlx(t_fields *fields)
 {
-	t_fields	fields;
-
-	if (argc != 2)
+	if (fields->texture)
+		mlx_destroy_image(fields->mlx, fields->texture);
+	if (fields->win)
+		mlx_destroy_window(fields->mlx, fields->win);
+	if (fields->mlx)
 	{
-		ft_putstr_fd("Error\nUsage: ./cub3D <map.cub>\n", 2);
-		return (1);
+		mlx_destroy_display(fields->mlx);
+		free(fields->mlx);
 	}
-	init_fields(&fields);
-	if (parse(argv[1], &fields))
-	{
-		ft_putstr_fd("Error\nInvalid map!\n", 2);
-		free_fields(&fields);
-		return (1);
-	}
-	print_fields(&fields);
-	if (init_window(&fields))
-	{
-		free_fields(&fields);
-		return (1);
-	}
-	mlx_loop(fields.mlx);
-	free_fields(&fields);
-	return (0);
 }
