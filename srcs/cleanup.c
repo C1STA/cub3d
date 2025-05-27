@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 02:54:20 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/26 03:35:49 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,16 @@
 
 void	cleanup_mlx(t_fields *fields)
 {
-	if (fields->texture)
-		mlx_destroy_image(fields->mlx, fields->texture);
+	if (fields->no_texture)
+		mlx_destroy_image(fields->mlx, fields->no_texture);
+	if (fields->so_texture)
+		mlx_destroy_image(fields->mlx, fields->so_texture);
+	if (fields->we_texture)
+		mlx_destroy_image(fields->mlx, fields->we_texture);
+	if (fields->ea_texture)
+		mlx_destroy_image(fields->mlx, fields->ea_texture);
+	if (fields->ray)
+		free(fields->ray);
 	if (fields->win)
 		mlx_destroy_window(fields->mlx, fields->win);
 	if (fields->mlx)

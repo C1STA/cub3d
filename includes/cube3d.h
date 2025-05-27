@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 02:54:22 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/26 03:53:33 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,33 @@ typedef struct s_map
 	char	player_dir;
 }			t_map;
 
+typedef struct s_ray
+{
+	double	pos_x;
+	double	pos_y;
+	double	dir_x;
+	double	dir_y;
+	double	plane_x;
+	double	plane_y;
+	double	camera_x;
+	double	ray_dir_x;
+	double	ray_dir_y;
+	int		map_x;
+	int		map_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	perp_wall_dist;
+	int		step_x;
+	int		step_y;
+	int		hit;
+	int		side;
+	int		line_height;
+	int		draw_start;
+	int		draw_end;
+}			t_ray;
+
 typedef struct s_fields
 {
 	char	*no_filename;
@@ -48,10 +75,23 @@ typedef struct s_fields
 	t_map	*map;
 	void	*mlx;
 	void	*win;
-	void	*texture;
+	void	*no_texture;
+	void	*so_texture;
+	void	*we_texture;
+	void	*ea_texture;
 	int		tex_width;
 	int		tex_height;
+	t_ray	*ray;
 }			t_fields;
+
+typedef struct s_img
+{
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}			t_img;
 
 /* Helper functions */
 size_t		get_tab_len(char **tab);
@@ -100,7 +140,11 @@ void		print_fields(t_fields *fields);
 /* Window functions */
 int			init_window(t_fields *fields);
 
+/* Movement functions */
+int			handle_movement(int keycode, t_fields *fields);
+
 /* New functions */
 int			check_walls(t_map *map, int i, int j);
+void		cast_rays(t_fields *fields, t_ray *ray);
 
 #endif

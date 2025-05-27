@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 01:24:04 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/28 00:30:21 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	init_fields(t_fields *fields)
 
 void	free_fields(t_fields *fields)
 {
+	free(fields->ray);
 	if (fields->no_filename)
 		free(fields->no_filename);
 	if (fields->so_filename)

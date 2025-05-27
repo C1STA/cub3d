@@ -6,7 +6,7 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/05/26 02:29:25 by dpinto           ###   ########.fr        #
+#    Updated: 2025/05/26 03:35:47 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,9 @@ SRCS = srcs/main.c \
        srcs/print_fields.c \
        srcs/window.c \
        srcs/cleanup.c \
-       srcs/parse_fields_utils2.c
+       srcs/parse_fields_utils2.c \
+       srcs/raycasting.c \
+       srcs/movement.c
 
 OBJS = $(SRCS:.c=.o)
 
