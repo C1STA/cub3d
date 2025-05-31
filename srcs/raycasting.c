@@ -1,65 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycasting.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
+/*   Updated: 2025/05/29 05:38:47 by dpinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/cube3d.h"
 #include <math.h>
-
-static void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
-{
-	char	*dst;
-
-	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
-	*(unsigned int *)dst = color;
-}
-
-static int	get_texture_color(void *texture, int tex_x, int tex_y)
-{
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-
-	addr = mlx_get_data_addr(texture, &bits_per_pixel, &line_length, &endian);
-	return (*(unsigned int *)(addr + (tex_y * line_length + tex_x
-				* (bits_per_pixel / 8))));
-}
-
-static void	draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields)
-{
-	int		y;
-	double	wall_x;
-	int		tex_x;
-	int		tex_y;
-	void	*texture;
-
-	y = 0;
-	while (y < ray->draw_start)
-		my_mlx_pixel_put(img, x, y++,
-			fields->core[0] << 16 | fields->core[1] << 8 | fields->core[2]);
-	if (ray->side == 0)
-		wall_x = ray->pos_y + ray->perp_wall_dist * ray->ray_dir_y;
-	else
-		wall_x = ray->pos_x + ray->perp_wall_dist * ray->ray_dir_x;
-	wall_x -= floor(wall_x);
-	if (ray->side == 0 && ray->ray_dir_x > 0)
-		texture = fields->ea_texture;
-	else if (ray->side == 0)
-		texture = fields->we_texture;
-	else if (ray->ray_dir_y > 0)
-		texture = fields->so_texture;
-	else
-		texture = fields->no_texture;
-	tex_x = (int)(wall_x * fields->tex_width);
-	if ((ray->side == 0 && ray->ray_dir_x < 0) || (ray->side == 1
-			&& ray->ray_dir_y < 0))
-		tex_x = fields->tex_width - tex_x - 1;
-	while (y < ray->draw_end)
-	{
-		tex_y = (int)((double)(y - ray->draw_start) * fields->tex_height
-				/ (ray->draw_end - ray->draw_start));
-		my_mlx_pixel_put(img, x, y++, get_texture_color(texture, tex_x, tex_y));
-	}
-	while (y < WINDOW_HEIGHT)
-		my_mlx_pixel_put(img, x, y++,
-			fields->floor[0] << 16 | fields->floor[1] << 8 | fields->floor[2]);
-}
 
 static void	init_ray_dir(t_ray *ray, t_fields *fields, int x)
 {
@@ -133,9 +85,7 @@ static void	calculate_wall_height(t_ray *ray)
 	else
 		ray->perp_wall_dist = (ray->map_y - ray->pos_y + (1 - ray->step_y) / 2)
 			/ ray->ray_dir_y;
-	// Calcul de la hauteur de la ligne à dessiner
 	ray->line_height = (int)(WINDOW_HEIGHT / ray->perp_wall_dist);
-	// Calcul du point le plus bas et le plus haut de la ligne
 	ray->draw_start = -ray->line_height / 2 + WINDOW_HEIGHT / 2;
 	if (ray->draw_start < 0)
 		ray->draw_start = 0;
@@ -146,8 +96,8 @@ static void	calculate_wall_height(t_ray *ray)
 
 void	cast_rays(t_fields *fields, t_ray *ray)
 {
-	int x;
-	t_img img;
+	int		x;
+	t_img	img;
 
 	img.img = mlx_new_image(fields->mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,

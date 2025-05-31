@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 01:47:42 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/28 05:38:52 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ int	check_required_field(char **tab, t_fields *fields)
 
 int	find_map_start(char **tab)
 {
-	int i;
-	int j;
-	int fields_found;
+	int	i;
+	int	j;
+	int	fields_found;
 
 	i = 0;
 	fields_found = 0;

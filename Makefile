@@ -6,13 +6,13 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/05/26 03:35:47 by dpinto           ###   ########.fr        #
+#    Updated: 2025/05/31 05:31:48 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+# CFLAGS = -Wall -Wextra -Werror -g
 MLX_FLAGS = -Lmlx -lmlx -L/usr/lib -lXext -lX11 -lm
 
 SRCS = srcs/main.c \
@@ -27,10 +27,14 @@ SRCS = srcs/main.c \
        srcs/file_utils.c \
        srcs/print_fields.c \
        srcs/window.c \
-       srcs/cleanup.c \
+       srcs/window_init.c \
        srcs/parse_fields_utils2.c \
        srcs/raycasting.c \
-       srcs/movement.c
+       srcs/raycasting_texture.c \
+       srcs/raycasting_draw.c \
+       srcs/movement.c \
+       srcs/movement_utils.c \
+       srcs/movement_utils2.c
 
 OBJS = $(SRCS:.c=.o)
 

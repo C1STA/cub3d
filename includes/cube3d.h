@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 03:53:33 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/28 05:25:48 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@
 # define VALID_PLAYER "NSEW"
 # define WINDOW_WIDTH 1280
 # define WINDOW_HEIGHT 720
+
+/* Movement constants */
+# define MOVE_SPEED 0.08
+# define ROT_SPEED 0.05
+# define WALL_MARGIN 0.3
 
 typedef struct s_map
 {
@@ -127,6 +132,7 @@ int			copy_map(char **tab, int start, t_map *map);
 int			validate_colors(t_fields *fields);
 int			validate_textures(t_fields *fields);
 int			validate_map(t_map *map);
+int			check_walls(t_map *map, int i, int j);
 
 /* Map check functions */
 int			check_map_chars(t_map *map);
@@ -143,8 +149,26 @@ int			init_window(t_fields *fields);
 /* Movement functions */
 int			handle_movement(int keycode, t_fields *fields);
 
-/* New functions */
-int			check_walls(t_map *map, int i, int j);
+/* Movement utils functions */
+void		rotate_player(t_ray *ray, double rot_speed);
+int			check_collision(t_fields *fields, double next_x, double next_y);
+void		move_player(t_fields *fields, t_ray *ray, double dir_x,
+				double dir_y);
+int			handle_wasd(int keycode, t_fields *fields);
+int			handle_rotation(int keycode, t_fields *fields);
+
+/* Raycasting functions */
 void		cast_rays(t_fields *fields, t_ray *ray);
+
+/* Raycasting texture functions */
+void		my_mlx_pixel_put(t_img *img, int x, int y, int color);
+int			get_texture_color(void *texture, int tex_x, int tex_y);
+double		get_wall_x(t_ray *ray);
+void		*select_texture(t_ray *ray, t_fields *fields);
+
+/* Raycasting draw functions */
+void		draw_ceiling(t_img *img, int x, int draw_start, int *color);
+void		draw_floor(t_img *img, int x, int draw_end, int *color);
+void		draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields);
 
 #endif

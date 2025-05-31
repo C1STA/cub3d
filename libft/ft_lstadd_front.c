@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dpinto <pintodav75@gmail.com>              +#+  +:+       +#+        */
+/*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 02:15:10 by dpinto            #+#    #+#             */
-/*   Updated: 2024/04/22 02:22:11 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/31 05:03:42 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstadd_front(t_list **lst, t_list *new)
+void	ft_lstadd_front(t_list **lst, t_list *node)
 {
 	t_list	*ptr;
 
 	ptr = *lst;
-	*lst = new;
+	*lst = node;
 	(*lst)->next = ptr;
 }

@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/26 03:02:45 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/05/31 05:41:54 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,35 +60,10 @@ char	*pad_line(char *line, int width)
 	return (padded);
 }
 
-static void	print_map_info(t_map *map, char *line, char *padded)
-{
-	if (line)
-	{
-		ft_putstr_fd("Original line: ", 1);
-		ft_putstr_fd(line, 1);
-		ft_putstr_fd("\n", 1);
-	}
-	else
-	{
-		ft_putstr_fd("Copying map with dimensions: ", 1);
-		ft_putnbr_fd(map->width, 1);
-		ft_putstr_fd("x", 1);
-		ft_putnbr_fd(map->height, 1);
-		ft_putstr_fd("\n", 1);
-	}
-	if (padded)
-	{
-		ft_putstr_fd("Padded line: ", 1);
-		ft_putstr_fd(padded, 1);
-		ft_putstr_fd("\n", 1);
-	}
-}
-
 static int	process_map_line(t_map *map, char **tab, int start, int i)
 {
 	char	*padded;
 
-	print_map_info(map, tab[start + i], NULL);
 	padded = pad_line(tab[start + i], map->width);
 	if (!padded)
 	{
@@ -96,15 +71,13 @@ static int	process_map_line(t_map *map, char **tab, int start, int i)
 		return (1);
 	}
 	map->grid[i] = padded;
-	print_map_info(map, NULL, padded);
 	return (0);
 }
 
 int	copy_map(char **tab, int start, t_map *map)
 {
-	int i;
+	int	i;
 
-	print_map_info(map, NULL, NULL);
 	map->grid = malloc(sizeof(char *) * (map->height + 1));
 	if (!map->grid)
 		return (1);
