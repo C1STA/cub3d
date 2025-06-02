@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/28 05:25:48 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 03:17:58 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,5 +170,9 @@ void		*select_texture(t_ray *ray, t_fields *fields);
 void		draw_ceiling(t_img *img, int x, int draw_start, int *color);
 void		draw_floor(t_img *img, int x, int draw_end, int *color);
 void		draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields);
+
+/* Window texture functions */
+void		cleanup_loaded_textures(t_fields *fields);
+int			load_textures(t_fields *fields);
 
 #endif

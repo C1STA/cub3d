@@ -6,17 +6,39 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/02 02:36:02 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 03:19:02 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 
+static int	process_field_line(char *line, const char *field, t_fields *fields)
+{
+	char	**raws;
+	int		result;
+
+	raws = ft_split(line, ' ');
+	if (!raws)
+		return (0);
+	if (get_tab_len(raws) > 2)
+	{
+		free_strs(raws);
+		return (0);
+	}
+	result = 0;
+	if (!ft_strncmp(raws[0], field, ft_strlen(field) + 1))
+	{
+		fill_fields(fields, raws, field);
+		result = 1;
+	}
+	free_strs(raws);
+	return (result);
+}
+
 int	fields_is_present(char **tab, const char *field, t_fields *fields)
 {
-	int		i;
-	int		count;
-	char	**raws;
+	int	i;
+	int	count;
 
 	i = 0;
 	count = 0;
@@ -24,21 +46,8 @@ int	fields_is_present(char **tab, const char *field, t_fields *fields)
 	{
 		if (ft_strlen(tab[i]) > 0)
 		{
-			raws = ft_split(tab[i], ' ');
-			if (!raws)
-				return (0);
-			if (get_tab_len(raws) > 2)
-			{
-				free_strs(raws);
-				return (0);
-			}
-			if (!ft_strncmp(raws[0], field, ft_strlen(field) + 1))
-			{
-				fill_fields(fields, raws, field);
-				free_strs(raws);
+			if (process_field_line(tab[i], field, fields))
 				return (1);
-			}
-			free_strs(raws);
 			count++;
 		}
 		i++;
@@ -61,11 +70,29 @@ int	check_required_field(char **tab, t_fields *fields)
 	return (0);
 }
 
+static int	check_map_line(char *line, int fields_found)
+{
+	int	j;
+
+	j = 0;
+	while (line[j] && line[j] == ' ')
+		j++;
+	if (line[j] == '1' || line[j] == '0')
+	{
+		if (fields_found == 6)
+			return (1);
+		return (-1);
+	}
+	else if (line[j] != '\0')
+		return (2);
+	return (0);
+}
+
 int	find_map_start(char **tab)
 {
 	int	i;
-	int	j;
 	int	fields_found;
+	int	result;
 
 	i = 0;
 	fields_found = 0;
@@ -73,17 +100,12 @@ int	find_map_start(char **tab)
 	{
 		if (ft_strlen(tab[i]) > 0)
 		{
-			j = 0;
-			while (tab[i][j] && tab[i][j] == ' ')
-				j++;
-			if (tab[i][j] == '1' || tab[i][j] == '0')
-			{
-				if (fields_found == 6)
-					return (i);
-				else
-					return (-1);
-			}
-			else if (tab[i][j] != '\0')
+			result = check_map_line(tab[i], fields_found);
+			if (result == 1)
+				return (i);
+			else if (result == -1)
+				return (-1);
+			else if (result == 2)
 				fields_found++;
 		}
 		i++;

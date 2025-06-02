@@ -6,7 +6,7 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/05/31 05:31:48 by dpinto           ###   ########.fr        #
+#    Updated: 2025/06/02 03:21:53 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,10 +24,12 @@ SRCS = srcs/main.c \
        srcs/validate.c \
        srcs/validate_walls.c \
        srcs/helper.c \
+       srcs/helper_free.c \
        srcs/file_utils.c \
        srcs/print_fields.c \
        srcs/window.c \
        srcs/window_init.c \
+       srcs/window_texture.c \
        srcs/parse_fields_utils2.c \
        srcs/raycasting.c \
        srcs/raycasting_texture.c \
