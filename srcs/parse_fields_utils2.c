@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/28 05:38:52 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 02:36:02 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ int	fields_is_present(char **tab, const char *field, t_fields *fields)
 			raws = ft_split(tab[i], ' ');
 			if (!raws)
 				return (0);
+			if (get_tab_len(raws) > 2)
+			{
+				free_strs(raws);
+				return (0);
+			}
 			if (!ft_strncmp(raws[0], field, ft_strlen(field) + 1))
 			{
 				fill_fields(fields, raws, field);
@@ -73,8 +78,10 @@ int	find_map_start(char **tab)
 				j++;
 			if (tab[i][j] == '1' || tab[i][j] == '0')
 			{
-				if (fields_found >= 6)
+				if (fields_found == 6)
 					return (i);
+				else
+					return (-1);
 			}
 			else if (tab[i][j] != '\0')
 				fields_found++;

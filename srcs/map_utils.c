@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/31 05:41:54 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 02:17:25 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,7 @@ static int	process_map_line(t_map *map, char **tab, int start, int i)
 
 	padded = pad_line(tab[start + i], map->width);
 	if (!padded)
-	{
-		free_strs(map->grid);
 		return (1);
-	}
 	map->grid[i] = padded;
 	return (0);
 }
@@ -85,7 +82,7 @@ int	copy_map(char **tab, int start, t_map *map)
 	while (i < map->height)
 	{
 		if (process_map_line(map, tab, start, i))
-			return (1);
+			return (1); // free in case of error
 		i++;
 	}
 	map->grid[i] = NULL;

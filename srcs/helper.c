@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/31 05:37:20 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 02:20:58 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	get_tab_len(char **tab)
 	size_t	i;
 
 	i = 0;
-	while (tab[i])
+	while (tab && tab[i])
 		i++;
 	return (i);
 }
@@ -27,12 +27,13 @@ char	**free_strs(char **strs)
 	size_t	i;
 
 	i = 0;
-	while (strs[i])
+	while (strs && strs[i])
 	{
 		free(strs[i]);
 		i++;
 	}
-	free(strs);
+	if (strs)
+		free(strs);
 	return (NULL);
 }
 
@@ -85,9 +86,12 @@ static void	free_mlx_resources(t_fields *fields)
 		mlx_destroy_image(fields->mlx, fields->ea_texture);
 		fields->ea_texture = NULL;
 	}
-	mlx_destroy_display(fields->mlx);
-	free(fields->mlx);
-	fields->mlx = NULL;
+	if (fields->mlx)
+	{
+		mlx_destroy_display(fields->mlx);
+		free(fields->mlx);
+		fields->mlx = NULL;
+	}
 }
 
 void	free_fields(t_fields *fields)

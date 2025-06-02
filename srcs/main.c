@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/31 05:42:56 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 02:19:13 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,9 @@ int	main(int argc, char **argv)
 	init_fields(&fields);
 	if (parse(argv[1], &fields))
 	{
-		ft_putstr_fd("Error\nInvalid map!\n", 2);
 		free_fields(&fields);
 		return (1);
 	}
-	// print_fields(&fields);
 	if (init_window(&fields))
 	{
 		free_fields(&fields);

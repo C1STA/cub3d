@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/25 01:51:31 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 02:38:14 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,10 @@ static int	process_map(char **tab, t_fields *fields)
 	int	map_start;
 
 	map_start = find_map_start(tab);
-	if (map_start == -1 || parse_map(tab, map_start, fields))
-	{
-		ft_putstr_fd("Error\nInvalid map!\n", 2);
-		free_strs(tab);
+	if (map_start == -1)
 		return (1);
-	}
+	if (map_start == -1 || parse_map(tab, map_start, fields))
+		return (1);
 	return (0);
 }
 
@@ -56,7 +54,10 @@ int	parse(char *filename, t_fields *fields)
 		return (1);
 	}
 	if (process_map(tab, fields))
+	{
+		free_strs(tab);
 		return (1);
+	}
 	free_strs(tab);
 	return (0);
 }

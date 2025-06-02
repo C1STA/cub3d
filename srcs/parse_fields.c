@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/28 05:38:36 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/02 02:01:25 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ void	fill_color(int *color, char *str)
 
 void	fill_texture(char **dest, char *src)
 {
-	if (*dest)
-		free(*dest);
 	*dest = ft_strdup(src);
 }
 
