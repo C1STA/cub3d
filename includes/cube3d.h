@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/02 03:17:58 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/06/19 01:45:18 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,15 @@ typedef struct s_img
 	int		line_length;
 	int		endian;
 }			t_img;
+
+typedef struct s_tex_data
+{
+	double	wall_x;
+	int		tex_x;
+	double	step;
+	double	tex_pos;
+	void	*texture;
+}			t_tex_data;
 
 /* Helper functions */
 size_t		get_tab_len(char **tab);
