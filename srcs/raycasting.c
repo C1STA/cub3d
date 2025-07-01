@@ -6,13 +6,15 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/19 01:40:51 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/01 04:15:25 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 #include <math.h>
 
+// Calcule la direction du rayon pour la colonne x de l’écranm
+// selon la direction du joueur.
 static void	init_ray_dir(t_ray *ray, t_fields *fields, int x)
 {
 	(void)fields;
@@ -31,6 +33,7 @@ static void	init_ray_dir(t_ray *ray, t_fields *fields, int x)
 		ray->delta_dist_y = fabs(1 / ray->ray_dir_y);
 }
 
+// Prépare les variables pour avancer le rayon dans la carte, case par case.
 static void	init_dda_steps(t_ray *ray)
 {
 	if (ray->ray_dir_x < 0)
@@ -55,6 +58,7 @@ static void	init_dda_steps(t_ray *ray)
 	}
 }
 
+// Fait avancer le rayon dans la carte jusqu’à ce qu’il touche un mur.
 static void	perform_dda(t_ray *ray, t_fields *fields)
 {
 	ray->hit = 0;
@@ -77,6 +81,9 @@ static void	perform_dda(t_ray *ray, t_fields *fields)
 	}
 }
 
+// Calcule la distance entre le joueur et le mur touché,
+//	puis en déduit la hauteur du mur à afficher à l’écran (plus c’est loin,
+//	plus c’est petit).
 static void	calculate_wall_height(t_ray *ray)
 {
 	if (ray->side == 0)

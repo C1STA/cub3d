@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/19 01:45:41 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/01 04:17:31 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	draw_floor(t_img *img, int x, int draw_end, int *color)
 			color[0] << 16 | color[1] << 8 | color[2]);
 }
 
+// Dessine la colonne de mur à la bonne hauteur,
+//	avec la bonne partie de la texture, sur l’image.
 void	draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields)
 {
 	t_tex_data	tex;
