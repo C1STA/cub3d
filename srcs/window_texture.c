@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 void	cleanup_loaded_textures(t_fields *fields)
 {

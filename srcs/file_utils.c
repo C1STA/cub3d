@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 static char	*read_file_content(int fd, char *str)
 {

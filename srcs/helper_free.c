@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 char	**free_strs(char **strs)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 int	validate_colors(t_fields *fields)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 void	fill_color(int *color, char *str)
 {

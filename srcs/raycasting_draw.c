@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 void	draw_ceiling(t_img *img, int x, int draw_start, int *color)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 void		init_ray_values(t_ray *ray, t_fields *fields);
 int			load_textures(t_fields *fields);

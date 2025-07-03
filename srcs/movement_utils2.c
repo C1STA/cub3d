@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 
 void	move_player(t_fields *fields, t_ray *ray, double dir_x, double dir_y)
 {

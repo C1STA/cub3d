@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 #include <math.h>
 
 void	my_mlx_pixel_put(t_img *img, int x, int y, int color)

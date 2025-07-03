@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cube3d.h"
+#include "cube3d.h"
 #include <math.h>
 
 // Calcule la direction du rayon pour la colonne x de l’écranm
