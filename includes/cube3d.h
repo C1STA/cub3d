@@ -125,6 +125,7 @@ int			parse(char *filename, t_fields *fields);
 int			parse_fields(char **tab, t_fields *fields);
 int			check_required_field(char **tab, t_fields *fields);
 int			find_map_start(char **tab);
+int			check_map_line(char *line, int fields_found);
 int			fields_is_present(char **tab, const char *field, t_fields *fields);
 
 /* Parse fields utils */

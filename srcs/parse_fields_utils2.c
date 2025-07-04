@@ -55,6 +55,29 @@ int	fields_is_present(char **tab, const char *field, t_fields *fields)
 	return (0);
 }
 
+static int	field_is_dup(char **tab, const char *field)
+{
+	int		i;
+	int		result;
+	char	**raws;
+
+	i = 0;
+	result = 0;
+	while (tab[i])
+	{
+		raws = ft_split(tab[i], ' ');
+		if (!raws)
+			return (1);
+		if (!ft_strncmp(raws[0], field, ft_strlen(field) + 1))
+			result++;
+		free_strs(raws);
+		i++;
+	}
+	if (result == 0 || result > 1)
+		return (1);
+	return (0);
+}
+
 int	check_required_field(char **tab, t_fields *fields)
 {
 	int			i;
@@ -63,14 +86,14 @@ int	check_required_field(char **tab, t_fields *fields)
 	i = 0;
 	while (i < 6)
 	{
-		if (!fields_is_present(tab, f[i], fields))
+		if (!fields_is_present(tab, f[i], fields) || field_is_dup(tab, f[i]))
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-static int	check_map_line(char *line, int fields_found)
+int	check_map_line(char *line, int fields_found)
 {
 	int	j;
 
@@ -86,29 +109,4 @@ static int	check_map_line(char *line, int fields_found)
 	else if (line[j] != '\0')
 		return (2);
 	return (0);
-}
-
-int	find_map_start(char **tab)
-{
-	int	i;
-	int	fields_found;
-	int	result;
-
-	i = 0;
-	fields_found = 0;
-	while (tab[i])
-	{
-		if (ft_strlen(tab[i]) > 0)
-		{
-			result = check_map_line(tab[i], fields_found);
-			if (result == 1)
-				return (i);
-			else if (result == -1)
-				return (-1);
-			else if (result == 2)
-				fields_found++;
-		}
-		i++;
-	}
-	return (-1);
 }
