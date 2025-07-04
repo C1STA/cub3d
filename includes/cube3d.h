@@ -30,7 +30,7 @@
 /* Movement constants */
 # define MOVE_SPEED 0.08
 # define ROT_SPEED 0.05
-# define WALL_MARGIN 0.3
+# define WALL_MARGIN 0.1
 
 typedef struct s_map
 {
@@ -129,9 +129,9 @@ int			check_map_line(char *line, int fields_found);
 int			fields_is_present(char **tab, const char *field, t_fields *fields);
 
 /* Parse fields utils */
-void		fill_color(int *color, char *str);
-void		fill_texture(char **dest, char *src);
-void		fill_fields(t_fields *fields, char **raws, const char *field);
+int			fill_color(int *color, char *str);
+int			fill_texture(char **dest, char *src);
+int			fill_fields(t_fields *fields, char **raws, const char *field);
 
 /* Map utils */
 int			get_map_dimensions(char **tab, int start, t_map *map);

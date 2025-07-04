@@ -12,14 +12,38 @@
 
 #include "cube3d.h"
 
-void	fill_color(int *color, char *str)
+int	check_commas_and_digits(char *str)
+{
+	int	i;
+	int	count;
+
+	if (!str)
+		return (1);
+	i = 0;
+	count = 0;
+	while (str[i])
+	{
+		if (str[i] == ',')
+			count++;
+		else if (!ft_isdigit(str[i]))
+			return (1);
+		i++;
+	}
+	if (count != 2)
+		return (1);
+	return (0);
+}
+
+int	fill_color(int *color, char *str)
 {
 	char	**rgb;
 	int		i;
 
+	if (check_commas_and_digits(str))
+		return (1);
 	rgb = ft_split(str, ',');
 	if (!rgb)
-		return ;
+		return (1);
 	i = 0;
 	while (rgb[i] && i < 3)
 	{
@@ -27,27 +51,36 @@ void	fill_color(int *color, char *str)
 		i++;
 	}
 	free_strs(rgb);
+	return (0);
 }
 
-void	fill_texture(char **dest, char *src)
+int	fill_texture(char **dest, char *src)
 {
 	*dest = ft_strdup(src);
+	if (!*dest)
+		return (1);
+	return (0);
 }
 
-void	fill_fields(t_fields *fields, char **raws, const char *field)
+int	fill_fields(t_fields *fields, char **raws, const char *field)
 {
-	if (!ft_strncmp(field, "NO", 3))
-		fill_texture(&fields->no_filename, raws[1]);
-	else if (!ft_strncmp(field, "SO", 3))
-		fill_texture(&fields->so_filename, raws[1]);
-	else if (!ft_strncmp(field, "WE", 3))
-		fill_texture(&fields->we_filename, raws[1]);
-	else if (!ft_strncmp(field, "EA", 3))
-		fill_texture(&fields->ea_filename, raws[1]);
-	else if (!ft_strncmp(field, "F", 2))
-		fill_color(fields->floor, raws[1]);
-	else if (!ft_strncmp(field, "C", 2))
-		fill_color(fields->core, raws[1]);
+	if (!ft_strncmp(field, "NO", 3) && \
+!fill_texture(&fields->no_filename, raws[1]))
+		return (0);
+	else if (!ft_strncmp(field, "SO", 3) && \
+!fill_texture(&fields->so_filename, raws[1]))
+		return (0);
+	else if (!ft_strncmp(field, "WE", 3) && \
+!fill_texture(&fields->we_filename, raws[1]))
+		return (0);
+	else if (!ft_strncmp(field, "EA", 3) && \
+!fill_texture(&fields->ea_filename, raws[1]))
+		return (0);
+	else if (!ft_strncmp(field, "F", 2) && !fill_color(fields->floor, raws[1]))
+		return (0);
+	else if (!ft_strncmp(field, "C", 2) && !fill_color(fields->core, raws[1]))
+		return (0);
+	return (1);
 }
 
 int	parse_fields(char **tab, t_fields *fields)
@@ -68,29 +101,4 @@ int	parse_fields(char **tab, t_fields *fields)
 		return (1);
 	}
 	return (0);
-}
-
-int	find_map_start(char **tab)
-{
-	int	i;
-	int	fields_found;
-	int	result;
-
-	i = 0;
-	fields_found = 0;
-	while (tab[i])
-	{
-		if (ft_strlen(tab[i]) > 0)
-		{
-			result = check_map_line(tab[i], fields_found);
-			if (result == 1)
-				return (i);
-			else if (result == -1)
-				return (-1);
-			else if (result == 2)
-				fields_found++;
-		}
-		i++;
-	}
-	return (-1);
 }

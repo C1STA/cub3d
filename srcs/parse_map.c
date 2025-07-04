@@ -27,3 +27,28 @@ int	parse_map(char **tab, int start_idx, t_fields *fields)
 		return (1);
 	return (0);
 }
+
+int	find_map_start(char **tab)
+{
+	int	i;
+	int	fields_found;
+	int	result;
+
+	i = 0;
+	fields_found = 0;
+	while (tab[i])
+	{
+		if (ft_strlen(tab[i]) > 0)
+		{
+			result = check_map_line(tab[i], fields_found);
+			if (result == 1)
+				return (i);
+			else if (result == -1)
+				return (-1);
+			else if (result == 2)
+				fields_found++;
+		}
+		i++;
+	}
+	return (-1);
+}

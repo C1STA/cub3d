@@ -28,8 +28,8 @@ static int	process_field_line(char *line, const char *field, t_fields *fields)
 	result = 0;
 	if (!ft_strncmp(raws[0], field, ft_strlen(field) + 1))
 	{
-		fill_fields(fields, raws, field);
-		result = 1;
+		if (!fill_fields(fields, raws, field))
+			result = 1;
 	}
 	free_strs(raws);
 	return (result);
