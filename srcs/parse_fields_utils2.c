@@ -6,39 +6,40 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/02 03:19:02 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/04 04:11:38 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 
-static int	process_field_line(char *line, const char *field, t_fields *fields)
+static int	check_field_line_present(char **tab, const char *field,
+		t_fields *fields, int *count)
 {
-	char	**raws;
-	int		result;
+	int	res;
+	int	i;
 
-	raws = ft_split(line, ' ');
-	if (!raws)
-		return (0);
-	if (get_tab_len(raws) > 2)
+	i = 0;
+	while (tab[i] && *count < 6)
 	{
-		free_strs(raws);
-		return (0);
+		if (ft_strlen(tab[i]) > 0)
+		{
+			res = process_field_line(tab[i], field, fields);
+			if (res == -1)
+				return (-1);
+			if (res == 1)
+				return (1);
+			(*count)++;
+		}
+		i++;
 	}
-	result = 0;
-	if (!ft_strncmp(raws[0], field, ft_strlen(field) + 1))
-	{
-		fill_fields(fields, raws, field);
-		result = 1;
-	}
-	free_strs(raws);
-	return (result);
+	return (0);
 }
 
 int	fields_is_present(char **tab, const char *field, t_fields *fields)
 {
 	int	i;
 	int	count;
+	int	res;
 
 	i = 0;
 	count = 0;
@@ -46,7 +47,10 @@ int	fields_is_present(char **tab, const char *field, t_fields *fields)
 	{
 		if (ft_strlen(tab[i]) > 0)
 		{
-			if (process_field_line(tab[i], field, fields))
+			res = process_field_line(tab[i], field, fields);
+			if (res == -1)
+				return (-1);
+			if (res == 1)
 				return (1);
 			count++;
 		}
@@ -59,11 +63,15 @@ int	check_required_field(char **tab, t_fields *fields)
 {
 	int			i;
 	const char	*f[6] = {"NO", "SO", "WE", "EA", "F", "C"};
+	int			res;
 
 	i = 0;
 	while (i < 6)
 	{
-		if (!fields_is_present(tab, f[i], fields))
+		res = fields_is_present(tab, f[i], fields);
+		if (res == -1)
+			return (1);
+		if (!res)
 			return (1);
 		i++;
 	}

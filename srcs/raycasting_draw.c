@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/01 04:17:31 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/04 01:09:15 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	draw_floor(t_img *img, int x, int draw_end, int *color)
 }
 
 // Dessine la colonne de mur à la bonne hauteur,
-//	avec la bonne partie de la texture, sur l’image.
+//	avec la bonne partie de la texture, sur l'image.
 void	draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields)
 {
 	t_tex_data	tex;
@@ -51,12 +51,12 @@ void	draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields)
 	tex.tex_pos = (ray->draw_start - WINDOW_HEIGHT / 2 + ray->line_height / 2)
 		* tex.step;
 	y = ray->draw_start;
-	while (y < ray->draw_end)
+	while (y <= ray->draw_end)
 	{
 		tex_y = (int)tex.tex_pos & (fields->tex_height - 1);
 		tex.tex_pos += tex.step;
 		my_mlx_pixel_put(img, x, y++, get_texture_color(tex.texture, tex.tex_x,
 				tex_y));
 	}
-	draw_floor(img, x, ray->draw_end, fields->floor);
+	draw_floor(img, x, ray->draw_end + 1, fields->floor);
 }

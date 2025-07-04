@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/02 02:01:25 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/04 03:55:18 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	fill_texture(char **dest, char *src)
 	*dest = ft_strdup(src);
 }
 
-void	fill_fields(t_fields *fields, char **raws, const char *field)
+int	fill_fields(t_fields *fields, char **raws, const char *field)
 {
 	if (!ft_strncmp(field, "NO", 3))
 		fill_texture(&fields->no_filename, raws[1]);
@@ -48,6 +48,9 @@ void	fill_fields(t_fields *fields, char **raws, const char *field)
 		fill_color(fields->floor, raws[1]);
 	else if (!ft_strncmp(field, "C", 2))
 		fill_color(fields->core, raws[1]);
+	else
+		return (1);
+	return (0);
 }
 
 int	parse_fields(char **tab, t_fields *fields)

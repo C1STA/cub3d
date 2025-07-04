@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/19 01:45:18 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/04 04:11:38 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ int			fields_is_present(char **tab, const char *field, t_fields *fields);
 /* Parse fields utils */
 void		fill_color(int *color, char *str);
 void		fill_texture(char **dest, char *src);
-void		fill_fields(t_fields *fields, char **raws, const char *field);
+int			fill_fields(t_fields *fields, char **raws, const char *field);
 
 /* Map utils */
 int			get_map_dimensions(char **tab, int start, t_map *map);
@@ -183,5 +183,7 @@ void		draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields);
 /* Window texture functions */
 void		cleanup_loaded_textures(t_fields *fields);
 int			load_textures(t_fields *fields);
+
+int			process_field_line(char *line, const char *field, t_fields *fields);
 
 #endif
