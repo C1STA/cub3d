@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/29 05:26:55 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/09 01:52:43 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ static void	init_ray_ew(t_ray *ray, char dir)
 
 void	init_ray_values(t_ray *ray, t_fields *fields)
 {
-	ray->pos_x = fields->map->player_x;
-	ray->pos_y = fields->map->player_y;
+	ray->pos_x = fields->map->player_x + 0.5;
+	ray->pos_y = fields->map->player_y + 0.5;
 	if (fields->map->player_dir == 'N' || fields->map->player_dir == 'S')
 		init_ray_ns(ray, fields->map->player_dir);
 	else

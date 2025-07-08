@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/02 02:19:13 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/08 05:57:23 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	main(int argc, char **argv)
 {
 	t_fields	fields;
+	int			ret;
 
 	if (argc != 2)
 	{
@@ -22,7 +23,8 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	init_fields(&fields);
-	if (parse(argv[1], &fields))
+	ret = parse(argv[1], &fields);
+	if (ret)
 	{
 		free_fields(&fields);
 		return (1);

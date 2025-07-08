@@ -5,101 +5,337 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/04 04:05:02 by dpinto           ###   ########.fr       */
+/*   Created: 2025/07/08 04:30:00 by dpinto            #+#    #+#             */
+/*   Updated: 2025/07/09 01:53:05 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 
-static int	check_and_read_file(char *filename, char **str)
+/*
+** Détecte si une ligne est le début de la map (ignore espaces/tabs)
+*/
+int	is_map_line(const char *line)
 {
-	if (check_ext(filename))
-	{
-		ft_putstr_fd("Error\nWrong extension!\n", 2);
-		return (1);
-	}
-	*str = input_to_str(filename);
-	if (!*str)
-		return (1);
-	return (0);
-}
+	int	j;
 
-static int	process_map(char **tab, t_fields *fields)
-{
-	int	map_start;
-
-	map_start = find_map_start(tab);
-	if (map_start == -1)
-		return (1);
-	if (map_start == -1 || parse_map(tab, map_start, fields))
-		return (1);
-	return (0);
-}
-
-static int	is_valid_identifier(const char *line)
-{
-	const char	*ids[] = {"NO", "SO", "WE", "EA", "F", "C"};
-	int			i;
-	int			j;
-
-	i = 0;
-	while (line && line[i] == ' ')
-		i++;
-	if (!line[i])
-		return (1);
 	j = 0;
-	while (j < 6)
-	{
-		if (!ft_strncmp(line + i, ids[j], ft_strlen(ids[j])))
-			return (1);
+	while (line[j] && (line[j] <= 32))
 		j++;
-	}
-	return (0);
+	return (line[j] == '1' || line[j] == '0');
 }
 
-static int	check_identifiers(char **tab, int map_start)
+/*
+** Parsing des champs avant la map,
+	gestion des doublons et identifiants invalides
+*/
+int	parse_fields(char **tab)
 {
-	int	i;
+	int			found[6] = {0, 0, 0, 0, 0, 0};
+	const char	*f[6] = {"NO", "SO", "WE", "EA", "F", "C"};
 
+	int i, j, k, len, is_valid;
 	i = 0;
-	while (tab[i] && (map_start == -1 || i < map_start))
+	while (tab[i])
 	{
-		if (ft_strlen(tab[i]) > 0 && !is_valid_identifier(tab[i]))
+		k = 0;
+		while (tab[i][k] && (tab[i][k] <= 32))
+			k++;
+		if (is_map_line(tab[i]))
+			break ;
+		if (ft_strlen(tab[i] + k) > 0)
 		{
-			ft_putstr_fd("Error\nInvalid identifier: ", 2);
-			ft_putstr_fd(tab[i], 2);
-			ft_putstr_fd("\n", 2);
-			return (1);
+			is_valid = 0;
+			j = 0;
+			while (j < 6)
+			{
+				len = ft_strlen(f[j]);
+				if (!ft_strncmp(tab[i] + k, f[j], len) && (tab[i][k
+						+ len] == ' ' || tab[i][k + len] == '\t'))
+				{
+					if (found[j])
+					{
+						ft_putstr_fd("Error\nDuplicate identifier\n", 2);
+						return (1);
+					}
+					found[j] = 1;
+					is_valid = 1;
+				}
+				j++;
+			}
+			if (!is_valid)
+			{
+				ft_putstr_fd("Error\nInvalid identifier\n", 2);
+				return (1);
+			}
 		}
 		i++;
 	}
 	return (0);
 }
 
+/* Remplit la structure fields à partir des lignes du fichier .cub */
+static int	fill_fields_from_lines(char **tab, t_fields *fields)
+{
+	const char	*f[6] = {"NO", "SO", "WE", "EA", "F", "C"};
+
+	int i, k, len;
+	i = 0;
+	while (tab[i])
+	{
+		k = 0;
+		while (tab[i][k] && (tab[i][k] <= 32))
+			k++;
+		if (is_map_line(tab[i]))
+			break ;
+		if (ft_strlen(tab[i] + k) > 0)
+		{
+			if (!ft_strncmp(tab[i] + k, f[0], 2))
+				fill_texture(&fields->no_filename, tab[i] + k + 2);
+			else if (!ft_strncmp(tab[i] + k, f[1], 2))
+				fill_texture(&fields->so_filename, tab[i] + k + 2);
+			else if (!ft_strncmp(tab[i] + k, f[2], 2))
+				fill_texture(&fields->we_filename, tab[i] + k + 2);
+			else if (!ft_strncmp(tab[i] + k, f[3], 2))
+				fill_texture(&fields->ea_filename, tab[i] + k + 2);
+			else if (!ft_strncmp(tab[i] + k, f[4], 1))
+				fill_color(fields->floor, tab[i] + k + 1);
+			else if (!ft_strncmp(tab[i] + k, f[5], 1))
+				fill_color(fields->core, tab[i] + k + 1);
+		}
+		i++;
+	}
+	return (i); // retourne l'index du début de la map
+}
+
+/* Remplit la structure map à partir des lignes de la map dans le fichier .cub */
+static int	fill_map_from_lines(char **tab, int map_start, t_fields *fields)
+{
+	char	*padded;
+
+	int i, j, height, max_width, len;
+	height = 0;
+	max_width = 0;
+	i = map_start;
+	while (tab[i])
+	{
+		len = ft_strlen(tab[i]);
+		if (len > max_width)
+			max_width = len;
+		if (len > 0)
+			height++;
+		i++;
+	}
+	if (height == 0)
+		return (1);
+	fields->map = malloc(sizeof(t_map));
+	if (!fields->map)
+		return (1);
+	fields->map->grid = malloc(sizeof(char *) * (height + 1));
+	if (!fields->map->grid)
+		return (1);
+	i = map_start;
+	j = 0;
+	while (tab[i])
+	{
+		len = ft_strlen(tab[i]);
+		if (len > 0)
+		{
+			padded = malloc(max_width + 1);
+			if (!padded)
+				return (1);
+			ft_memset(padded, ' ', max_width);
+			ft_memcpy(padded, tab[i], len);
+			padded[max_width] = '\0';
+			fields->map->grid[j] = padded;
+			j++;
+		}
+		i++;
+	}
+	fields->map->grid[j] = NULL;
+	fields->map->height = height;
+	fields->map->width = max_width;
+	return (0);
+}
+
+/* Détecte et stocke la position du joueur dans la map */
+static int	find_player_in_map(t_map *map)
+{
+	int i, j, found;
+	found = 0;
+	i = 0;
+	while (i < map->height)
+	{
+		j = 0;
+		while (map->grid[i][j])
+		{
+			if (map->grid[i][j] == 'N' || map->grid[i][j] == 'S'
+				|| map->grid[i][j] == 'E' || map->grid[i][j] == 'W')
+			{
+				if (found)
+				{
+					ft_putstr_fd("Error\nMultiple player positions\n", 2);
+					return (1);
+				}
+				map->player_x = j;
+				map->player_y = i;
+				map->player_dir = map->grid[i][j];
+				map->grid[i][j] = '0';
+				found = 1;
+			}
+			j++;
+		}
+		i++;
+	}
+	if (!found)
+	{
+		ft_putstr_fd("Error\nNo player position\n", 2);
+		return (1);
+	}
+	return (0);
+}
+
+static int	is_valid_map_char(char c)
+{
+	return (c == '0' || c == '1' || c == 'N' || c == 'S' || c == 'E' || c == 'W'
+		|| c == ' ');
+}
+
+static int	validate_map(t_map *map)
+{
+	char	c;
+
+	int i, j, w;
+	if (!map || !map->grid || map->height <= 0 || map->width <= 0)
+	{
+		ft_putstr_fd("Error\nMap structure invalid\n", 2);
+		return (1);
+	}
+	i = 0;
+	while (i < map->height)
+	{
+		w = map->width;
+		j = 0;
+		while (j < w)
+		{
+			c = map->grid[i][j];
+			if (!is_valid_map_char(c))
+			{
+				ft_putstr_fd("Error\nInvalid character in map\n", 2);
+				return (1);
+			}
+			if (c == '0' || c == 'N' || c == 'S' || c == 'E' || c == 'W')
+			{
+				if (i == 0 || j == 0 || i == map->height - 1 || j == w - 1)
+				{
+					ft_putstr_fd("Error\nMap not closed\n", 2);
+					return (1);
+				}
+				if (map->grid[i - 1][j] == ' ' || map->grid[i + 1][j] == ' '
+					|| map->grid[i][j - 1] == ' ' || map->grid[i][j + 1] == ' ')
+				{
+					ft_putstr_fd("Error\nMap not closed\n", 2);
+					return (1);
+				}
+			}
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
+// Ajoutons une fonction de sécurité pour la position du joueur
+static int	check_player_position(t_map *map)
+{
+	if (map->player_x < 0 || map->player_x >= map->width || map->player_y < 0
+		|| map->player_y >= map->height)
+	{
+		ft_putstr_fd("Error\nPlayer position out of map bounds\n", 2);
+		return (1);
+	}
+	return (0);
+}
+
+/*
+** Fonction principale de parsing (à compléter selon la structure du projet)
+*/
 int	parse(char *filename, t_fields *fields)
 {
 	char	*str;
 	char	**tab;
 	int		map_start;
 
-	if (check_and_read_file(filename, &str))
+	str = input_to_str(filename);
+	if (!str)
+	{
+		ft_putstr_fd("Error\nFailed to read file\n", 2);
 		return (1);
+	}
 	tab = ft_split(str, '\n');
 	free(str);
 	if (!tab)
+	{
+		ft_putstr_fd("Error\nFailed to split file\n", 2);
 		return (1);
-	map_start = find_map_start(tab);
-	if (check_identifiers(tab, map_start))
+	}
+	if (parse_fields(tab))
 	{
 		free_strs(tab);
 		return (1);
 	}
-	if (parse_fields(tab, fields) || process_map(tab, fields))
+	map_start = fill_fields_from_lines(tab, fields);
+	if (fill_map_from_lines(tab, map_start, fields))
+	{
+		free_strs(tab);
+		ft_putstr_fd("Error\nFailed to parse map\n", 2);
+		return (1);
+	}
+	if (find_player_in_map(fields->map))
+		return (1);
+	if (check_player_position(fields->map))
+		return (1);
+	if (validate_map(fields->map))
 	{
 		free_strs(tab);
 		return (1);
 	}
 	free_strs(tab);
 	return (0);
+}
+
+void	fill_texture(char **dest, char *src)
+{
+	if (*dest)
+		free(*dest);
+	while (*src == ' ' || *src == '\t')
+		src++;
+	*dest = ft_strdup(src);
+}
+
+void	fill_color(int *color, char *str)
+{
+	char **rgb;
+	int i;
+	int val;
+
+	while (*str == ' ' || *str == '\t')
+		str++;
+	rgb = ft_split(str, ',');
+	if (!rgb)
+		return ;
+	i = 0;
+	while (rgb[i] && i < 3)
+	{
+		val = ft_atoi(rgb[i]);
+		if (val < 0 || val > 255)
+		{
+			ft_putstr_fd("Error\nInvalid color value\n", 2);
+			free_strs(rgb);
+			exit(1);
+		}
+		color[i] = val;
+		i++;
+	}
+	free_strs(rgb);
 }

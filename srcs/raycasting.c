@@ -6,14 +6,14 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/01 04:15:25 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/09 01:48:44 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 #include <math.h>
 
-// Calcule la direction du rayon pour la colonne x de l’écranm
+// Calcule la direction du rayon pour la colonne x de l'écranm
 // selon la direction du joueur.
 static void	init_ray_dir(t_ray *ray, t_fields *fields, int x)
 {
@@ -58,11 +58,17 @@ static void	init_dda_steps(t_ray *ray)
 	}
 }
 
-// Fait avancer le rayon dans la carte jusqu’à ce qu’il touche un mur.
+// Fait avancer le rayon dans la carte jusqu'à ce qu'il touche un mur.
 static void	perform_dda(t_ray *ray, t_fields *fields)
 {
+	int	steps;
+	int	max_steps;
+
+	max_steps = fields->map->width + fields->map->height;
+	// Limite de sécurité
+	steps = 0;
 	ray->hit = 0;
-	while (ray->hit == 0)
+	while (ray->hit == 0 && steps < max_steps)
 	{
 		if (ray->side_dist_x < ray->side_dist_y)
 		{
@@ -76,23 +82,53 @@ static void	perform_dda(t_ray *ray, t_fields *fields)
 			ray->map_y += ray->step_y;
 			ray->side = 1;
 		}
+		// Vérification des bornes de la carte
+		if (ray->map_x < 0 || ray->map_x >= fields->map->width || ray->map_y < 0
+			|| ray->map_y >= fields->map->height)
+		{
+			ray->hit = 1; // Traiter les bords comme des murs
+			break ;
+		}
 		if (fields->map->grid[ray->map_y][ray->map_x] == '1')
 			ray->hit = 1;
+		steps++;
+	}
+	// Si on n'a pas trouvé de mur après max_steps, forcer un hit
+	if (!ray->hit)
+	{
+		ray->hit = 1;
+		ray->perp_wall_dist = 1.0; // Distance de sécurité
 	}
 }
 
 // Calcule la distance entre le joueur et le mur touché,
-//	puis en déduit la hauteur du mur à afficher à l’écran (plus c’est loin,
-//	plus c’est petit).
+//	puis en déduit la hauteur du mur à afficher à l'écran (plus c'est loin,
+//	plus c'est petit).
 static void	calculate_wall_height(t_ray *ray)
 {
 	if (ray->side == 0)
-		ray->perp_wall_dist = (ray->map_x - ray->pos_x + (1 - ray->step_x) / 2)
-			/ ray->ray_dir_x;
+	{
+		if (ray->ray_dir_x == 0)
+			ray->perp_wall_dist = 1.0; // Éviter division par zéro
+		else
+			ray->perp_wall_dist = (ray->map_x - ray->pos_x + (1 - ray->step_x)
+					/ 2) / ray->ray_dir_x;
+	}
 	else
-		ray->perp_wall_dist = (ray->map_y - ray->pos_y + (1 - ray->step_y) / 2)
-			/ ray->ray_dir_y;
+	{
+		if (ray->ray_dir_y == 0)
+			ray->perp_wall_dist = 1.0; // Éviter division par zéro
+		else
+			ray->perp_wall_dist = (ray->map_y - ray->pos_y + (1 - ray->step_y)
+					/ 2) / ray->ray_dir_y;
+	}
+	// Assurer une distance minimale pour éviter les murs trop grands
+	if (ray->perp_wall_dist <= 0.01)
+		ray->perp_wall_dist = 0.01;
 	ray->line_height = (int)(WINDOW_HEIGHT / ray->perp_wall_dist);
+	// Limiter la hauteur maximum du mur pour éviter les valeurs excessives
+	if (ray->line_height > WINDOW_HEIGHT * 10)
+		ray->line_height = WINDOW_HEIGHT * 10;
 	ray->draw_start = -ray->line_height / 2 + WINDOW_HEIGHT / 2;
 	if (ray->draw_start < 0)
 		ray->draw_start = 0;

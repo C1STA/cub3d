@@ -6,7 +6,7 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/07/04 04:14:23 by dpinto           ###   ########.fr        #
+#    Updated: 2025/07/08 18:26:37 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,6 @@ MLX_FLAGS = -Lmlx -lmlx -L/usr/lib -lXext -lX11 -lm
 
 SRCS = srcs/main.c \
        srcs/parse.c \
-       srcs/parse_fields.c \
-       srcs/parse_map.c \
        srcs/map_check.c \
        srcs/map_utils.c \
        srcs/validate.c \
@@ -30,8 +28,6 @@ SRCS = srcs/main.c \
        srcs/window.c \
        srcs/window_init.c \
        srcs/window_texture.c \
-       srcs/parse_fields_utils2.c \
-       srcs/parse_fields_utils3.c \
        srcs/raycasting.c \
        srcs/raycasting_texture.c \
        srcs/raycasting_draw.c \

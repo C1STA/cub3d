@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/04 04:11:38 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/08 18:26:38 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void		cleanup_mlx(t_fields *fields);
 
 /* Parse fields functions */
 int			parse(char *filename, t_fields *fields);
-int			parse_fields(char **tab, t_fields *fields);
+int			parse_fields(char **tab);
 int			check_required_field(char **tab, t_fields *fields);
 int			find_map_start(char **tab);
 int			fields_is_present(char **tab, const char *field, t_fields *fields);
@@ -140,7 +140,6 @@ int			copy_map(char **tab, int start, t_map *map);
 /* Validation functions */
 int			validate_colors(t_fields *fields);
 int			validate_textures(t_fields *fields);
-int			validate_map(t_map *map);
 int			check_walls(t_map *map, int i, int j);
 
 /* Map check functions */
@@ -185,5 +184,7 @@ void		cleanup_loaded_textures(t_fields *fields);
 int			load_textures(t_fields *fields);
 
 int			process_field_line(char *line, const char *field, t_fields *fields);
+
+int			is_map_line(const char *line);
 
 #endif
