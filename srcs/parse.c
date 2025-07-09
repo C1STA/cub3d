@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 04:30:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/09 01:53:05 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/09 02:18:42 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,21 @@ int	parse_fields(char **tab)
 	return (0);
 }
 
+/* Fonction pour vérifier si une ligne est vide ou ne contient que des espaces */
+static int	is_empty_line(const char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] != ' ' && line[i] != '\t')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 /* Remplit la structure fields à partir des lignes du fichier .cub */
 static int	fill_fields_from_lines(char **tab, t_fields *fields)
 {
@@ -112,18 +127,29 @@ static int	fill_fields_from_lines(char **tab, t_fields *fields)
 static int	fill_map_from_lines(char **tab, int map_start, t_fields *fields)
 {
 	char	*padded;
+	int		map_started;
 
 	int i, j, height, max_width, len;
+	map_started = 0;
 	height = 0;
 	max_width = 0;
 	i = map_start;
 	while (tab[i])
 	{
 		len = ft_strlen(tab[i]);
-		if (len > max_width)
-			max_width = len;
-		if (len > 0)
+		if (len > 0 && !is_empty_line(tab[i]))
+		{
+			if (len > max_width)
+				max_width = len;
 			height++;
+			map_started = 1;
+		}
+		else if (map_started && (len == 0 || is_empty_line(tab[i])))
+		{
+			// Ligne vide détectée après le début de la carte
+			ft_putstr_fd("Error\nEmpty line inside map\n", 2);
+			return (1);
+		}
 		i++;
 	}
 	if (height == 0)
@@ -139,7 +165,7 @@ static int	fill_map_from_lines(char **tab, int map_start, t_fields *fields)
 	while (tab[i])
 	{
 		len = ft_strlen(tab[i]);
-		if (len > 0)
+		if (len > 0 && !is_empty_line(tab[i]))
 		{
 			padded = malloc(max_width + 1);
 			if (!padded)
@@ -257,6 +283,112 @@ static int	check_player_position(t_map *map)
 	return (0);
 }
 
+/* Fonction pour détecter les lignes vides dans la section map du fichier original */
+static int	check_empty_lines_in_map(char *file_content)
+{
+	char	*map_start_ptr;
+	char	*line_start;
+	char	*last_valid_line;
+	char	*temp_ptr;
+	char	*temp_line_start;
+	char	*check_ptr;
+	int		in_map_section;
+	int		map_started;
+	int		has_map_chars;
+	int		is_empty;
+
+	in_map_section = 0;
+	map_started = 0;
+	last_valid_line = NULL;
+	// Trouver le début de la section map
+	map_start_ptr = file_content;
+	while (*map_start_ptr)
+	{
+		// Ignorer les espaces au début de la ligne
+		while (*map_start_ptr == ' ' || *map_start_ptr == '\t')
+			map_start_ptr++;
+		if (*map_start_ptr == '1' || *map_start_ptr == '0')
+		{
+			in_map_section = 1;
+			map_started = 1;
+			break ;
+		}
+		// Passer à la ligne suivante
+		while (*map_start_ptr && *map_start_ptr != '\n')
+			map_start_ptr++;
+		if (*map_start_ptr == '\n')
+			map_start_ptr++;
+	}
+	if (!in_map_section)
+		return (0); // Pas de map trouvée
+	// D'abord, trouver la dernière ligne valide de la carte
+	temp_ptr = map_start_ptr;
+	temp_line_start = temp_ptr;
+	while (*temp_ptr)
+	{
+		if (*temp_ptr == '\n')
+		{
+			// Vérifier si cette ligne contient des caractères de carte valides
+			check_ptr = temp_line_start;
+			has_map_chars = 0;
+			while (check_ptr < temp_ptr)
+			{
+				if (*check_ptr == '1' || *check_ptr == '0' || *check_ptr == 'N'
+					|| *check_ptr == 'S' || *check_ptr == 'E'
+					|| *check_ptr == 'W')
+				{
+					has_map_chars = 1;
+					break ;
+				}
+				check_ptr++;
+			}
+			if (has_map_chars)
+				last_valid_line = temp_ptr;
+					// Marquer cette position comme dernière ligne valide
+			temp_ptr++;
+			temp_line_start = temp_ptr;
+		}
+		else
+		{
+			temp_ptr++;
+		}
+	}
+	// Maintenant analyser seulement jusqu'à la dernière ligne valide
+	line_start = map_start_ptr;
+	while (*map_start_ptr && (last_valid_line == NULL
+			|| map_start_ptr <= last_valid_line))
+	{
+		if (*map_start_ptr == '\n')
+		{
+			// Vérifier si la ligne est vide ou ne contient que des espaces
+			check_ptr = line_start;
+			is_empty = 1;
+			while (check_ptr < map_start_ptr)
+			{
+				if (*check_ptr != ' ' && *check_ptr != '\t')
+				{
+					is_empty = 0;
+					break ;
+				}
+				check_ptr++;
+			}
+			if (is_empty && map_started)
+			{
+				ft_putstr_fd("Error\nEmpty line inside map\n", 2);
+				return (1);
+			}
+			// Passer à la ligne suivante
+			map_start_ptr++;
+			line_start = map_start_ptr;
+		}
+		else
+		{
+			map_start_ptr++;
+		}
+	}
+	return (0);
+}
+
 /*
 ** Fonction principale de parsing (à compléter selon la structure du projet)
 */
@@ -272,6 +404,12 @@ int	parse(char *filename, t_fields *fields)
 		ft_putstr_fd("Error\nFailed to read file\n", 2);
 		return (1);
 	}
+	// Vérifier les lignes vides dans la map AVANT de diviser le string
+	if (check_empty_lines_in_map(str))
+	{
+		free(str);
+		return (1);
+	}
 	tab = ft_split(str, '\n');
 	free(str);
 	if (!tab)
@@ -285,6 +423,15 @@ int	parse(char *filename, t_fields *fields)
 		return (1);
 	}
 	map_start = fill_fields_from_lines(tab, fields);
+	// AJOUT: Vérification que tous les champs obligatoires sont présents
+	if (!fields->no_filename || !fields->so_filename || !fields->we_filename
+		|| !fields->ea_filename || fields->floor[0] == -1 || fields->core[0] ==
+		-1)
+	{
+		ft_putstr_fd("Error\nMissing required field(s)\n", 2);
+		free_strs(tab);
+		return (1);
+	}
 	if (fill_map_from_lines(tab, map_start, fields))
 	{
 		free_strs(tab);
