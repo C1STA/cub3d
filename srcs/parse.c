@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 04:30:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/09 02:18:42 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/09 02:29:55 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,7 +344,7 @@ static int	check_empty_lines_in_map(char *file_content)
 			}
 			if (has_map_chars)
 				last_valid_line = temp_ptr;
-					// Marquer cette position comme dernière ligne valide
+			// Marquer cette position comme dernière ligne valide
 			temp_ptr++;
 			temp_line_start = temp_ptr;
 		}
@@ -465,19 +465,58 @@ void	fill_color(int *color, char *str)
 	char **rgb;
 	int i;
 	int val;
+	int comma_count;
 
 	while (*str == ' ' || *str == '\t')
 		str++;
+
+	// Valider le format de la chaîne AVANT ft_split
+	comma_count = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == ',')
+		{
+			comma_count++;
+			// Vérifier les virgules doubles
+			if (i == 0 || str[i - 1] == ',' || str[i + 1] == ',' || str[i
+				+ 1] == '\0')
+			{
+				ft_putstr_fd("Error\nInvalid color format: double comma or comma at start/end\n",
+					2);
+				exit(1);
+			}
+		}
+		else if (str[i] < '0' || str[i] > '9')
+		{
+			ft_putstr_fd("Error\nColor components must be numeric\n", 2);
+			exit(1);
+		}
+		i++;
+	}
+
+	// Vérifier qu'il y a exactement 2 virgules (pour 3 composantes)
+	if (comma_count != 2)
+	{
+		ft_putstr_fd("Error\nColor must have exactly 3 values (R,G,B)\n", 2);
+		exit(1);
+	}
+
 	rgb = ft_split(str, ',');
 	if (!rgb)
-		return ;
+	{
+		ft_putstr_fd("Error\nInvalid color format\n", 2);
+		exit(1);
+	}
+
+	// À ce point, nous savons qu'il y a exactement 3 composantes
 	i = 0;
-	while (rgb[i] && i < 3)
+	while (i < 3)
 	{
 		val = ft_atoi(rgb[i]);
 		if (val < 0 || val > 255)
 		{
-			ft_putstr_fd("Error\nInvalid color value\n", 2);
+			ft_putstr_fd("Error\nColor value must be between 0 and 255\n", 2);
 			free_strs(rgb);
 			exit(1);
 		}
