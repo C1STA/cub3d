@@ -6,7 +6,7 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/07/08 18:26:37 by dpinto           ###   ########.fr        #
+#    Updated: 2025/07/11 00:00:35 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,8 @@ SRCS = srcs/main.c \
        srcs/window_init.c \
        srcs/window_texture.c \
        srcs/raycasting.c \
+       srcs/raycasting_utils.c \
+       srcs/raycasting_calc.c \
        srcs/raycasting_texture.c \
        srcs/raycasting_draw.c \
        srcs/movement.c \

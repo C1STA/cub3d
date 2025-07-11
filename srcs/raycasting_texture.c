@@ -38,7 +38,7 @@ int	get_texture_color(void *texture, int tex_x, int tex_y)
 	if (tex_x < 0 || tex_y < 0)
 		return (0);
 	return (*(unsigned int *)(addr + (tex_y * line_length + tex_x
-				* (bits_per_pixel / 8))));
+			* (bits_per_pixel / 8))));
 }
 
 double	get_wall_x(t_ray *ray)

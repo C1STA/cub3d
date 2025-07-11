@@ -6,15 +6,12 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 04:30:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/09 02:29:55 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/11 03:04:31 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 
-/*
-** Détecte si une ligne est le début de la map (ignore espaces/tabs)
-*/
 int	is_map_line(const char *line)
 {
 	int	j;
@@ -25,56 +22,69 @@ int	is_map_line(const char *line)
 	return (line[j] == '1' || line[j] == '0');
 }
 
-/*
-** Parsing des champs avant la map,
-	gestion des doublons et identifiants invalides
-*/
+static int	check_field_identifier(char *line, int k, int *found,
+		const char **f)
+{
+	int	j;
+	int	len;
+
+	j = 0;
+	while (j < 6)
+	{
+		len = ft_strlen(f[j]);
+		if (!ft_strncmp(line + k, f[j], len) && (line[k + len] == ' ' || line[k
+					+ len] == '\t'))
+		{
+			if (found[j])
+			{
+				ft_putstr_fd("Error\nDuplicate identifier\n", 2);
+				return (1);
+			}
+			found[j] = 1;
+			return (0);
+		}
+		j++;
+	}
+	ft_putstr_fd("Error\nInvalid identifier\n", 2);
+	return (1);
+}
+
+static int	validate_field_line(char *line, int *found, const char **f)
+{
+	int	k;
+
+	k = 0;
+	while (line[k] && (line[k] <= 32))
+		k++;
+	if (ft_strlen(line + k) > 0)
+		return (check_field_identifier(line, k, found, f));
+	return (0);
+}
+
 int	parse_fields(char **tab)
 {
-	int			found[6] = {0, 0, 0, 0, 0, 0};
+	int			found[6];
 	const char	*f[6] = {"NO", "SO", "WE", "EA", "F", "C"};
+	int			i;
 
-	int i, j, k, len, is_valid;
+	found[0] = 0;
+	found[1] = 0;
+	found[2] = 0;
+	found[3] = 0;
+	found[4] = 0;
+	found[5] = 0;
 	i = 0;
 	while (tab[i])
 	{
-		k = 0;
-		while (tab[i][k] && (tab[i][k] <= 32))
-			k++;
 		if (is_map_line(tab[i]))
 			break ;
-		if (ft_strlen(tab[i] + k) > 0)
-		{
-			is_valid = 0;
-			j = 0;
-			while (j < 6)
-			{
-				len = ft_strlen(f[j]);
-				if (!ft_strncmp(tab[i] + k, f[j], len) && (tab[i][k
-						+ len] == ' ' || tab[i][k + len] == '\t'))
-				{
-					if (found[j])
-					{
-						ft_putstr_fd("Error\nDuplicate identifier\n", 2);
-						return (1);
-					}
-					found[j] = 1;
-					is_valid = 1;
-				}
-				j++;
-			}
-			if (!is_valid)
-			{
-				ft_putstr_fd("Error\nInvalid identifier\n", 2);
-				return (1);
-			}
-		}
+		if (validate_field_line(tab[i], found, f))
+			return (1);
 		i++;
 	}
 	return (0);
 }
 
-/* Fonction pour vérifier si une ligne est vide ou ne contient que des espaces */
 static int	is_empty_line(const char *line)
 {
 	int	i;
@@ -89,12 +99,29 @@ static int	is_empty_line(const char *line)
 	return (1);
 }
 
-/* Remplit la structure fields à partir des lignes du fichier .cub */
+static void	assign_field_value(char *line, int k, t_fields *fields,
+		const char **f)
+{
+	if (!ft_strncmp(line + k, f[0], 2))
+		fill_texture(&fields->no_filename, line + k + 2);
+	else if (!ft_strncmp(line + k, f[1], 2))
+		fill_texture(&fields->so_filename, line + k + 2);
+	else if (!ft_strncmp(line + k, f[2], 2))
+		fill_texture(&fields->we_filename, line + k + 2);
+	else if (!ft_strncmp(line + k, f[3], 2))
+		fill_texture(&fields->ea_filename, line + k + 2);
+	else if (!ft_strncmp(line + k, f[4], 1))
+		fill_color(fields->floor, line + k + 1);
+	else if (!ft_strncmp(line + k, f[5], 1))
+		fill_color(fields->core, line + k + 1);
+}
+
 static int	fill_fields_from_lines(char **tab, t_fields *fields)
 {
 	const char	*f[6] = {"NO", "SO", "WE", "EA", "F", "C"};
+	int			i;
+	int			k;
 
-	int i, k, len;
 	i = 0;
 	while (tab[i])
 	{
@@ -104,62 +131,71 @@ static int	fill_fields_from_lines(char **tab, t_fields *fields)
 		if (is_map_line(tab[i]))
 			break ;
 		if (ft_strlen(tab[i] + k) > 0)
-		{
-			if (!ft_strncmp(tab[i] + k, f[0], 2))
-				fill_texture(&fields->no_filename, tab[i] + k + 2);
-			else if (!ft_strncmp(tab[i] + k, f[1], 2))
-				fill_texture(&fields->so_filename, tab[i] + k + 2);
-			else if (!ft_strncmp(tab[i] + k, f[2], 2))
-				fill_texture(&fields->we_filename, tab[i] + k + 2);
-			else if (!ft_strncmp(tab[i] + k, f[3], 2))
-				fill_texture(&fields->ea_filename, tab[i] + k + 2);
-			else if (!ft_strncmp(tab[i] + k, f[4], 1))
-				fill_color(fields->floor, tab[i] + k + 1);
-			else if (!ft_strncmp(tab[i] + k, f[5], 1))
-				fill_color(fields->core, tab[i] + k + 1);
-		}
+			assign_field_value(tab[i], k, fields, f);
 		i++;
 	}
-	return (i); // retourne l'index du début de la map
+	return (i);
 }
 
-/* Remplit la structure map à partir des lignes de la map dans le fichier .cub */
-static int	fill_map_from_lines(char **tab, int map_start, t_fields *fields)
+static int	process_line_dimension(char *line, int *height, int *max_width,
+		int *map_started)
 {
-	char	*padded;
-	int		map_started;
+	int	len;
 
-	int i, j, height, max_width, len;
+	len = ft_strlen(line);
+	if (len > 0 && !is_empty_line(line))
+	{
+		if (len > *max_width)
+			*max_width = len;
+		(*height)++;
+		*map_started = 1;
+	}
+	else if (*map_started && (len == 0 || is_empty_line(line)))
+	{
+		ft_putstr_fd("Error\nEmpty line inside map\n", 2);
+		return (1);
+	}
+	return (0);
+}
+
+static int	calculate_map_dimensions(char **tab, int map_start, int *height,
+		int *max_width)
+{
+	int	i;
+	int	map_started;
+
+	*height = 0;
+	*max_width = 0;
 	map_started = 0;
-	height = 0;
-	max_width = 0;
 	i = map_start;
 	while (tab[i])
 	{
-		len = ft_strlen(tab[i]);
-		if (len > 0 && !is_empty_line(tab[i]))
-		{
-			if (len > max_width)
-				max_width = len;
-			height++;
-			map_started = 1;
-		}
-		else if (map_started && (len == 0 || is_empty_line(tab[i])))
-		{
-			// Ligne vide détectée après le début de la carte
-			ft_putstr_fd("Error\nEmpty line inside map\n", 2);
+		if (process_line_dimension(tab[i], height, max_width, &map_started))
 			return (1);
-		}
 		i++;
 	}
-	if (height == 0)
-		return (1);
+	return (0);
+}
+
+static int	allocate_map_memory(t_fields *fields, int height)
+{
 	fields->map = malloc(sizeof(t_map));
 	if (!fields->map)
 		return (1);
 	fields->map->grid = malloc(sizeof(char *) * (height + 1));
 	if (!fields->map->grid)
 		return (1);
+	return (0);
+}
+
+static int	fill_map_grid(char **tab, int map_start, t_fields *fields,
+		int max_width)
+{
+	char	*padded;
+	int		i;
+	int		j;
+	int		len;
+
 	i = map_start;
 	j = 0;
 	while (tab[i])
@@ -179,15 +215,48 @@ static int	fill_map_from_lines(char **tab, int map_start, t_fields *fields)
 		i++;
 	}
 	fields->map->grid[j] = NULL;
+	return (0);
+}
+
+static int	fill_map_from_lines(char **tab, int map_start, t_fields *fields)
+{
+	int	height;
+	int	max_width;
+
+	if (calculate_map_dimensions(tab, map_start, &height, &max_width))
+		return (1);
+	if (height == 0)
+		return (1);
+	if (allocate_map_memory(fields, height))
+		return (1);
+	if (fill_map_grid(tab, map_start, fields, max_width))
+		return (1);
 	fields->map->height = height;
 	fields->map->width = max_width;
 	return (0);
 }
 
-/* Détecte et stocke la position du joueur dans la map */
+static int	process_player_character(t_map *map, int i, int j, int *found)
+{
+	if (*found)
+	{
+		ft_putstr_fd("Error\nMultiple player positions\n", 2);
+		return (1);
+	}
+	map->player_x = j;
+	map->player_y = i;
+	map->player_dir = map->grid[i][j];
+	map->grid[i][j] = '0';
+	*found = 1;
+	return (0);
+}
+
 static int	find_player_in_map(t_map *map)
 {
-	int i, j, found;
+	int	i;
+	int	j;
+	int	found;
+
 	found = 0;
 	i = 0;
 	while (i < map->height)
@@ -197,18 +266,8 @@ static int	find_player_in_map(t_map *map)
 		{
 			if (map->grid[i][j] == 'N' || map->grid[i][j] == 'S'
 				|| map->grid[i][j] == 'E' || map->grid[i][j] == 'W')
-			{
-				if (found)
-				{
-					ft_putstr_fd("Error\nMultiple player positions\n", 2);
+				if (process_player_character(map, i, j, &found))
 					return (1);
-				}
-				map->player_x = j;
-				map->player_y = i;
-				map->player_dir = map->grid[i][j];
-				map->grid[i][j] = '0';
-				found = 1;
-			}
 			j++;
 		}
 		i++;
@@ -227,16 +286,52 @@ static int	is_valid_map_char(char c)
 		|| c == ' ');
 }
 
-static int	validate_map(t_map *map)
+static int	validate_map_structure(t_map *map)
 {
-	char	c;
-
-	int i, j, w;
 	if (!map || !map->grid || map->height <= 0 || map->width <= 0)
 	{
 		ft_putstr_fd("Error\nMap structure invalid\n", 2);
 		return (1);
 	}
+	return (0);
+}
+
+static int	validate_character_at_position(t_map *map, int i, int j, char c)
+{
+	int	w;
+
+	w = map->width;
+	if (!is_valid_map_char(c))
+	{
+		ft_putstr_fd("Error\nInvalid character in map\n", 2);
+		return (1);
+	}
+	if (c == '0' || c == 'N' || c == 'S' || c == 'E' || c == 'W')
+	{
+		if (i == 0 || j == 0 || i == map->height - 1 || j == w - 1)
+		{
+			ft_putstr_fd("Error\nMap not closed\n", 2);
+			return (1);
+		}
+		if (map->grid[i - 1][j] == ' ' || map->grid[i + 1][j] == ' '
+			|| map->grid[i][j - 1] == ' ' || map->grid[i][j + 1] == ' ')
+		{
+			ft_putstr_fd("Error\nMap not closed\n", 2);
+			return (1);
+		}
+	}
+	return (0);
+}
+
+static int	validate_map(t_map *map)
+{
+	char	c;
+	int		i;
+	int		j;
+	int		w;
+
+	if (validate_map_structure(map))
+		return (1);
 	i = 0;
 	while (i < map->height)
 	{
@@ -245,25 +340,8 @@ static int	validate_map(t_map *map)
 		while (j < w)
 		{
 			c = map->grid[i][j];
-			if (!is_valid_map_char(c))
-			{
-				ft_putstr_fd("Error\nInvalid character in map\n", 2);
+			if (validate_character_at_position(map, i, j, c))
 				return (1);
-			}
-			if (c == '0' || c == 'N' || c == 'S' || c == 'E' || c == 'W')
-			{
-				if (i == 0 || j == 0 || i == map->height - 1 || j == w - 1)
-				{
-					ft_putstr_fd("Error\nMap not closed\n", 2);
-					return (1);
-				}
-				if (map->grid[i - 1][j] == ' ' || map->grid[i + 1][j] == ' '
-					|| map->grid[i][j - 1] == ' ' || map->grid[i][j + 1] == ' ')
-				{
-					ft_putstr_fd("Error\nMap not closed\n", 2);
-					return (1);
-				}
-			}
 			j++;
 		}
 		i++;
@@ -271,7 +349,6 @@ static int	validate_map(t_map *map)
 	return (0);
 }
 
-// Ajoutons une fonction de sécurité pour la position du joueur
 static int	check_player_position(t_map *map)
 {
 	if (map->player_x < 0 || map->player_x >= map->width || map->player_y < 0
@@ -283,161 +360,157 @@ static int	check_player_position(t_map *map)
 	return (0);
 }
 
-/* Fonction pour détecter les lignes vides dans la section map du fichier original */
-static int	check_empty_lines_in_map(char *file_content)
+static char	*find_map_start_ptr(char *file_content)
 {
 	char	*map_start_ptr;
-	char	*line_start;
-	char	*last_valid_line;
-	char	*temp_ptr;
-	char	*temp_line_start;
-	char	*check_ptr;
-	int		in_map_section;
-	int		map_started;
-	int		has_map_chars;
-	int		is_empty;
 
-	in_map_section = 0;
-	map_started = 0;
-	last_valid_line = NULL;
-	// Trouver le début de la section map
 	map_start_ptr = file_content;
 	while (*map_start_ptr)
 	{
-		// Ignorer les espaces au début de la ligne
 		while (*map_start_ptr == ' ' || *map_start_ptr == '\t')
 			map_start_ptr++;
 		if (*map_start_ptr == '1' || *map_start_ptr == '0')
-		{
-			in_map_section = 1;
-			map_started = 1;
 			break ;
-		}
-		// Passer à la ligne suivante
 		while (*map_start_ptr && *map_start_ptr != '\n')
 			map_start_ptr++;
 		if (*map_start_ptr == '\n')
 			map_start_ptr++;
 	}
-	if (!in_map_section)
-		return (0); // Pas de map trouvée
-	// D'abord, trouver la dernière ligne valide de la carte
+	if (*map_start_ptr == '\0')
+		return (NULL);
+	return (map_start_ptr);
+}
+
+static int	line_has_map_chars(char *line_start, char *line_end)
+{
+	char	*check_ptr;
+
+	check_ptr = line_start;
+	while (check_ptr < line_end)
+	{
+		if (*check_ptr == '1' || *check_ptr == '0' || *check_ptr == 'N'
+			|| *check_ptr == 'S' || *check_ptr == 'E' || *check_ptr == 'W')
+			return (1);
+		check_ptr++;
+	}
+	return (0);
+}
+
+static char	*find_last_valid_line(char *map_start_ptr)
+{
+	char	*temp_ptr;
+	char	*temp_line_start;
+	char	*last_valid_line;
+
+	last_valid_line = NULL;
 	temp_ptr = map_start_ptr;
 	temp_line_start = temp_ptr;
 	while (*temp_ptr)
 	{
 		if (*temp_ptr == '\n')
 		{
-			// Vérifier si cette ligne contient des caractères de carte valides
-			check_ptr = temp_line_start;
-			has_map_chars = 0;
-			while (check_ptr < temp_ptr)
-			{
-				if (*check_ptr == '1' || *check_ptr == '0' || *check_ptr == 'N'
-					|| *check_ptr == 'S' || *check_ptr == 'E'
-					|| *check_ptr == 'W')
-				{
-					has_map_chars = 1;
-					break ;
-				}
-				check_ptr++;
-			}
-			if (has_map_chars)
+			if (line_has_map_chars(temp_line_start, temp_ptr))
 				last_valid_line = temp_ptr;
-			// Marquer cette position comme dernière ligne valide
 			temp_ptr++;
 			temp_line_start = temp_ptr;
 		}
 		else
-		{
 			temp_ptr++;
-		}
 	}
-	// Maintenant analyser seulement jusqu'à la dernière ligne valide
+	return (last_valid_line);
+}
+
+static int	is_line_empty(char *line_start, char *line_end)
+{
+	char	*check_ptr;
+
+	check_ptr = line_start;
+	while (check_ptr < line_end)
+	{
+		if (*check_ptr != ' ' && *check_ptr != '\t')
+			return (0);
+		check_ptr++;
+	}
+	return (1);
+}
+
+static int	validate_map_content(char *map_start_ptr, char *last_valid_line)
+{
+	char	*line_start;
+
 	line_start = map_start_ptr;
 	while (*map_start_ptr && (last_valid_line == NULL
 			|| map_start_ptr <= last_valid_line))
 	{
 		if (*map_start_ptr == '\n')
 		{
-			// Vérifier si la ligne est vide ou ne contient que des espaces
-			check_ptr = line_start;
-			is_empty = 1;
-			while (check_ptr < map_start_ptr)
-			{
-				if (*check_ptr != ' ' && *check_ptr != '\t')
-				{
-					is_empty = 0;
-					break ;
-				}
-				check_ptr++;
-			}
-			if (is_empty && map_started)
+			if (is_line_empty(line_start, map_start_ptr))
 			{
 				ft_putstr_fd("Error\nEmpty line inside map\n", 2);
 				return (1);
 			}
-			// Passer à la ligne suivante
 			map_start_ptr++;
 			line_start = map_start_ptr;
 		}
 		else
-		{
 			map_start_ptr++;
-		}
 	}
 	return (0);
 }
 
-/*
-** Fonction principale de parsing (à compléter selon la structure du projet)
-*/
-int	parse(char *filename, t_fields *fields)
+static int	check_empty_lines_in_map(char *file_content)
+{
+	char	*map_start_ptr;
+	char	*last_valid_line;
+
+	map_start_ptr = find_map_start_ptr(file_content);
+	if (!map_start_ptr)
+		return (0);
+	last_valid_line = find_last_valid_line(map_start_ptr);
+	return (validate_map_content(map_start_ptr, last_valid_line));
+}
+
+static char	**prepare_file_content(char *filename)
 {
 	char	*str;
 	char	**tab;
-	int		map_start;
 
 	str = input_to_str(filename);
 	if (!str)
 	{
 		ft_putstr_fd("Error\nFailed to read file\n", 2);
-		return (1);
+		return (NULL);
 	}
-	// Vérifier les lignes vides dans la map AVANT de diviser le string
 	if (check_empty_lines_in_map(str))
 	{
 		free(str);
-		return (1);
+		return (NULL);
 	}
 	tab = ft_split(str, '\n');
 	free(str);
 	if (!tab)
 	{
 		ft_putstr_fd("Error\nFailed to split file\n", 2);
-		return (1);
+		return (NULL);
 	}
-	if (parse_fields(tab))
-	{
-		free_strs(tab);
-		return (1);
-	}
-	map_start = fill_fields_from_lines(tab, fields);
-	// AJOUT: Vérification que tous les champs obligatoires sont présents
+	return (tab);
+}
+
+static int	validate_required_fields(t_fields *fields, char **tab)
+{
 	if (!fields->no_filename || !fields->so_filename || !fields->we_filename
-		|| !fields->ea_filename || fields->floor[0] == -1 || fields->core[0] ==
-		-1)
+		|| !fields->ea_filename || fields->floor[0] == -1
+		|| fields->core[0] == -1)
 	{
 		ft_putstr_fd("Error\nMissing required field(s)\n", 2);
 		free_strs(tab);
 		return (1);
 	}
-	if (fill_map_from_lines(tab, map_start, fields))
-	{
-		free_strs(tab);
-		ft_putstr_fd("Error\nFailed to parse map\n", 2);
-		return (1);
-	}
+	return (0);
+}
+
+static int	validate_final_map(t_fields *fields, char **tab)
+{
 	if (find_player_in_map(fields->map))
 		return (1);
 	if (check_player_position(fields->map))
@@ -447,6 +520,33 @@ int	parse(char *filename, t_fields *fields)
 		free_strs(tab);
 		return (1);
 	}
+	return (0);
+}
+
+int	parse(char *filename, t_fields *fields)
+{
+	char	**tab;
+	int		map_start;
+
+	tab = prepare_file_content(filename);
+	if (!tab)
+		return (1);
+	if (parse_fields(tab))
+	{
+		free_strs(tab);
+		return (1);
+	}
+	map_start = fill_fields_from_lines(tab, fields);
+	if (validate_required_fields(fields, tab))
+		return (1);
+	if (fill_map_from_lines(tab, map_start, fields))
+	{
+		free_strs(tab);
+		ft_putstr_fd("Error\nFailed to parse map\n", 2);
+		return (1);
+	}
+	if (validate_final_map(fields, tab))
+		return (1);
 	free_strs(tab);
 	return (0);
 }
@@ -460,56 +560,52 @@ void	fill_texture(char **dest, char *src)
 	*dest = ft_strdup(src);
 }
 
-void	fill_color(int *color, char *str)
+static int	check_comma_validity(char *str, int i, int comma_count)
 {
-	char **rgb;
-	int i;
-	int val;
-	int comma_count;
+	if (i == 0 || str[i - 1] == ',' || str[i + 1] == ',' || str[i + 1] == '\0')
+	{
+		ft_putstr_fd("Error\nInvalid color format: comma\n", 2);
+		exit(1);
+	}
+	return (comma_count + 1);
+}
 
-	while (*str == ' ' || *str == '\t')
-		str++;
+static void	validate_character(char c, int i, char *str, int *comma_count)
+{
+	if (c == ',')
+		*comma_count = check_comma_validity(str, i, *comma_count);
+	else if (c < '0' || c > '9')
+	{
+		ft_putstr_fd("Error\nColor components must be numeric\n", 2);
+		exit(1);
+	}
+}
 
-	// Valider le format de la chaîne AVANT ft_split
+static int	validate_color_format(char *str)
+{
+	int	i;
+	int	comma_count;
+
 	comma_count = 0;
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == ',')
-		{
-			comma_count++;
-			// Vérifier les virgules doubles
-			if (i == 0 || str[i - 1] == ',' || str[i + 1] == ',' || str[i
-				+ 1] == '\0')
-			{
-				ft_putstr_fd("Error\nInvalid color format: double comma or comma at start/end\n",
-					2);
-				exit(1);
-			}
-		}
-		else if (str[i] < '0' || str[i] > '9')
-		{
-			ft_putstr_fd("Error\nColor components must be numeric\n", 2);
-			exit(1);
-		}
+		validate_character(str[i], i, str, &comma_count);
 		i++;
 	}
-
-	// Vérifier qu'il y a exactement 2 virgules (pour 3 composantes)
 	if (comma_count != 2)
 	{
 		ft_putstr_fd("Error\nColor must have exactly 3 values (R,G,B)\n", 2);
 		exit(1);
 	}
+	return (0);
+}
 
-	rgb = ft_split(str, ',');
-	if (!rgb)
-	{
-		ft_putstr_fd("Error\nInvalid color format\n", 2);
-		exit(1);
-	}
+static void	process_color_values(int *color, char **rgb)
+{
+	int	i;
+	int	val;
 
-	// À ce point, nous savons qu'il y a exactement 3 composantes
 	i = 0;
 	while (i < 3)
 	{
@@ -523,5 +619,21 @@ void	fill_color(int *color, char *str)
 		color[i] = val;
 		i++;
 	}
+}
+
+void	fill_color(int *color, char *str)
+{
+	char	**rgb;
+
+	while (*str == ' ' || *str == '\t')
+		str++;
+	validate_color_format(str);
+	rgb = ft_split(str, ',');
+	if (!rgb)
+	{
+		ft_putstr_fd("Error\nInvalid color format\n", 2);
+		exit(1);
+	}
+	process_color_values(color, rgb);
 	free_strs(rgb);
 }

@@ -6,135 +6,20 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/09 01:48:44 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/11 00:02:34 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cube3d.h"
 #include <math.h>
 
-// Calcule la direction du rayon pour la colonne x de l'écranm
-// selon la direction du joueur.
-static void	init_ray_dir(t_ray *ray, t_fields *fields, int x)
+static void	cast_single_ray(t_fields *fields, t_ray *ray, t_img *img, int x)
 {
-	(void)fields;
-	ray->camera_x = 2 * x / (double)WINDOW_WIDTH - 1;
-	ray->ray_dir_x = ray->dir_x + ray->plane_x * ray->camera_x;
-	ray->ray_dir_y = ray->dir_y + ray->plane_y * ray->camera_x;
-	ray->map_x = (int)ray->pos_x;
-	ray->map_y = (int)ray->pos_y;
-	if (ray->ray_dir_x == 0)
-		ray->delta_dist_x = 1e30;
-	else
-		ray->delta_dist_x = fabs(1 / ray->ray_dir_x);
-	if (ray->ray_dir_y == 0)
-		ray->delta_dist_y = 1e30;
-	else
-		ray->delta_dist_y = fabs(1 / ray->ray_dir_y);
-}
-
-// Prépare les variables pour avancer le rayon dans la carte, case par case.
-static void	init_dda_steps(t_ray *ray)
-{
-	if (ray->ray_dir_x < 0)
-	{
-		ray->step_x = -1;
-		ray->side_dist_x = (ray->pos_x - ray->map_x) * ray->delta_dist_x;
-	}
-	else
-	{
-		ray->step_x = 1;
-		ray->side_dist_x = (ray->map_x + 1.0 - ray->pos_x) * ray->delta_dist_x;
-	}
-	if (ray->ray_dir_y < 0)
-	{
-		ray->step_y = -1;
-		ray->side_dist_y = (ray->pos_y - ray->map_y) * ray->delta_dist_y;
-	}
-	else
-	{
-		ray->step_y = 1;
-		ray->side_dist_y = (ray->map_y + 1.0 - ray->pos_y) * ray->delta_dist_y;
-	}
-}
-
-// Fait avancer le rayon dans la carte jusqu'à ce qu'il touche un mur.
-static void	perform_dda(t_ray *ray, t_fields *fields)
-{
-	int	steps;
-	int	max_steps;
-
-	max_steps = fields->map->width + fields->map->height;
-	// Limite de sécurité
-	steps = 0;
-	ray->hit = 0;
-	while (ray->hit == 0 && steps < max_steps)
-	{
-		if (ray->side_dist_x < ray->side_dist_y)
-		{
-			ray->side_dist_x += ray->delta_dist_x;
-			ray->map_x += ray->step_x;
-			ray->side = 0;
-		}
-		else
-		{
-			ray->side_dist_y += ray->delta_dist_y;
-			ray->map_y += ray->step_y;
-			ray->side = 1;
-		}
-		// Vérification des bornes de la carte
-		if (ray->map_x < 0 || ray->map_x >= fields->map->width || ray->map_y < 0
-			|| ray->map_y >= fields->map->height)
-		{
-			ray->hit = 1; // Traiter les bords comme des murs
-			break ;
-		}
-		if (fields->map->grid[ray->map_y][ray->map_x] == '1')
-			ray->hit = 1;
-		steps++;
-	}
-	// Si on n'a pas trouvé de mur après max_steps, forcer un hit
-	if (!ray->hit)
-	{
-		ray->hit = 1;
-		ray->perp_wall_dist = 1.0; // Distance de sécurité
-	}
-}
-
-// Calcule la distance entre le joueur et le mur touché,
-//	puis en déduit la hauteur du mur à afficher à l'écran (plus c'est loin,
-//	plus c'est petit).
-static void	calculate_wall_height(t_ray *ray)
-{
-	if (ray->side == 0)
-	{
-		if (ray->ray_dir_x == 0)
-			ray->perp_wall_dist = 1.0; // Éviter division par zéro
-		else
-			ray->perp_wall_dist = (ray->map_x - ray->pos_x + (1 - ray->step_x)
-					/ 2) / ray->ray_dir_x;
-	}
-	else
-	{
-		if (ray->ray_dir_y == 0)
-			ray->perp_wall_dist = 1.0; // Éviter division par zéro
-		else
-			ray->perp_wall_dist = (ray->map_y - ray->pos_y + (1 - ray->step_y)
-					/ 2) / ray->ray_dir_y;
-	}
-	// Assurer une distance minimale pour éviter les murs trop grands
-	if (ray->perp_wall_dist <= 0.01)
-		ray->perp_wall_dist = 0.01;
-	ray->line_height = (int)(WINDOW_HEIGHT / ray->perp_wall_dist);
-	// Limiter la hauteur maximum du mur pour éviter les valeurs excessives
-	if (ray->line_height > WINDOW_HEIGHT * 10)
-		ray->line_height = WINDOW_HEIGHT * 10;
-	ray->draw_start = -ray->line_height / 2 + WINDOW_HEIGHT / 2;
-	if (ray->draw_start < 0)
-		ray->draw_start = 0;
-	ray->draw_end = ray->line_height / 2 + WINDOW_HEIGHT / 2;
-	if (ray->draw_end >= WINDOW_HEIGHT)
-		ray->draw_end = WINDOW_HEIGHT - 1;
+	init_ray_dir(ray, fields, x);
+	init_dda_steps(ray);
+	perform_dda(ray, fields);
+	calculate_wall_height(ray);
+	draw_textured_line(img, x, ray, fields);
 }
 
 void	cast_rays(t_fields *fields, t_ray *ray)
@@ -148,11 +33,7 @@ void	cast_rays(t_fields *fields, t_ray *ray)
 	x = 0;
 	while (x < WINDOW_WIDTH)
 	{
-		init_ray_dir(ray, fields, x);
-		init_dda_steps(ray);
-		perform_dda(ray, fields);
-		calculate_wall_height(ray);
-		draw_textured_line(&img, x, ray, fields);
+		cast_single_ray(fields, ray, &img, x);
 		x++;
 	}
 	mlx_put_image_to_window(fields->mlx, fields->win, img.img, 0, 0);

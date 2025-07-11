@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/09 01:38:47 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/10 23:52:02 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,30 @@ void	draw_floor(t_img *img, int x, int draw_end, int *color)
 		my_mlx_pixel_put(img, x, y++, rgb_color);
 }
 
-// Dessine la colonne de mur à la bonne hauteur,
-//	avec la bonne partie de la texture, sur l'image.
+static void	draw_texture_pixels(t_img *img, int x, t_ray *ray, t_tex_data *tex)
+{
+	int	y;
+	int	tex_y;
+
+	y = ray->draw_start;
+	while (y <= ray->draw_end)
+	{
+		if (y >= 0 && y < WINDOW_HEIGHT)
+		{
+			tex_y = (int)tex->tex_pos & (64 - 1);
+			if (tex_y < 0 || tex_y >= 64)
+				tex_y = 0;
+			my_mlx_pixel_put(img, x, y, get_texture_color(tex->texture,
+					tex->tex_x, tex_y));
+		}
+		tex->tex_pos += tex->step;
+		y++;
+	}
+}
+
 void	draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields)
 {
 	t_tex_data	tex;
-	int			y;
-	int			tex_y;
 
 	draw_ceiling(img, x, ray->draw_start, fields->core);
 	tex.wall_x = get_wall_x(ray);
@@ -56,19 +73,6 @@ void	draw_textured_line(t_img *img, int x, t_ray *ray, t_fields *fields)
 	tex.step = 1.0 * fields->tex_height / ray->line_height;
 	tex.tex_pos = (ray->draw_start - WINDOW_HEIGHT / 2 + ray->line_height / 2)
 		* tex.step;
-	y = ray->draw_start;
-	while (y <= ray->draw_end)
-	{
-		if (y >= 0 && y < WINDOW_HEIGHT) // Sécurité bornes image
-		{
-			tex_y = (int)tex.tex_pos & (fields->tex_height - 1);
-			if (tex_y < 0 || tex_y >= fields->tex_height)
-				tex_y = 0;
-			my_mlx_pixel_put(img, x, y, get_texture_color(tex.texture,
-					tex.tex_x, tex_y));
-		}
-		tex.tex_pos += tex.step;
-		y++;
-	}
+	draw_texture_pixels(img, x, ray, &tex);
 	draw_floor(img, x, ray->draw_end + 1, fields->floor);
 }
