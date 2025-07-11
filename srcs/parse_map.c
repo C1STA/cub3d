@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/28 05:38:28 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/12 00:51:17 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	parse_map(char **tab, int start_idx, t_fields *fields)
 		return (1);
 	if (check_map_chars(fields->map))
 		return (1);
-	if (validate_map(fields->map))
+	if (parse_validate_map(fields->map))
 		return (1);
 	return (0);
 }

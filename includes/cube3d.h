@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/10 23:59:42 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/12 01:12:44 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,10 +127,24 @@ int			check_required_field(char **tab, t_fields *fields);
 int			find_map_start(char **tab);
 int			fields_is_present(char **tab, const char *field, t_fields *fields);
 
+/* Parse map validation functions */
+int			fill_map_from_lines(char **tab, int map_start, t_fields *fields);
+int			find_player_in_map(t_map *map);
+int			check_player_position(t_map *map);
+int			parse_validate_map(t_map *map);
+int			validate_map_structure(t_map *map);
+int			validate_character_at_position(t_map *map, int i, int j, char c);
+int			is_empty_line(const char *line);
+
 /* Parse fields utils */
 void		fill_color(int *color, char *str);
 void		fill_texture(char **dest, char *src);
 int			fill_fields(t_fields *fields, char **raws, const char *field);
+
+/* Color utils */
+int			check_comma_validity(char *str, int i, int comma_count);
+void		validate_character(char c, int i, char *str, int *comma_count);
+int			validate_color_format(char *str);
 
 /* Map utils */
 int			get_map_dimensions(char **tab, int start, t_map *map);
@@ -194,5 +208,18 @@ int			load_textures(t_fields *fields);
 int			process_field_line(char *line, const char *field, t_fields *fields);
 
 int			is_map_line(const char *line);
+int			check_field_identifier(char *line, int k, int *found,
+				const char **f);
+int			validate_field_line(char *line, int *found, const char **f);
+int			validate_map_content(char *map_start_ptr, char *last_valid_line);
+int			check_empty_lines_in_map(char *file_content);
+int			is_line_empty(char *line_start, char *line_end);
+
+void		assign_field_value(char *line, int k, t_fields *fields,
+				const char **f);
+int			fill_fields_from_lines(char **tab, t_fields *fields);
+char		*find_map_start_ptr(char *file_content);
+int			line_has_map_chars(char *line_start, char *line_end);
+char		*find_last_valid_line(char *map_start_ptr);
 
 #endif
