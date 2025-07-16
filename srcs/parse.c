@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 04:30:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/12 00:53:39 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/16 01:08:04 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ static char	**prepare_file_content(char *filename)
 static int	validate_required_fields(t_fields *fields, char **tab)
 {
 	if (!fields->no_filename || !fields->so_filename || !fields->we_filename
-		|| !fields->ea_filename || fields->floor[0] == -1
-		|| fields->core[0] == -1)
+		|| !fields->ea_filename || fields->floor[0] == -1 || fields->core[0] ==
+		-1)
 	{
 		ft_putstr_fd("Error\nMissing required field(s)\n", 2);
 		free_strs(tab);
@@ -73,12 +73,12 @@ int	parse(char *filename, t_fields *fields)
 	tab = prepare_file_content(filename);
 	if (!tab)
 		return (1);
-	if (parse_fields(tab))
+	map_start = parse_fields(tab, fields);
+	if (map_start == -1)
 	{
 		free_strs(tab);
 		return (1);
 	}
-	map_start = fill_fields_from_lines(tab, fields);
 	if (validate_required_fields(fields, tab))
 		return (1);
 	if (fill_map_from_lines(tab, map_start, fields))

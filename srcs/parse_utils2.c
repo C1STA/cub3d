@@ -6,48 +6,11 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 00:45:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/12 01:13:24 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/16 01:06:16 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
-
-void	assign_field_value(char *line, int k, t_fields *fields, const char **f)
-{
-	if (!ft_strncmp(line + k, f[0], 2))
-		fill_texture(&fields->no_filename, line + k + 2);
-	else if (!ft_strncmp(line + k, f[1], 2))
-		fill_texture(&fields->so_filename, line + k + 2);
-	else if (!ft_strncmp(line + k, f[2], 2))
-		fill_texture(&fields->we_filename, line + k + 2);
-	else if (!ft_strncmp(line + k, f[3], 2))
-		fill_texture(&fields->ea_filename, line + k + 2);
-	else if (!ft_strncmp(line + k, f[4], 1))
-		fill_color(fields->floor, line + k + 1);
-	else if (!ft_strncmp(line + k, f[5], 1))
-		fill_color(fields->core, line + k + 1);
-}
-
-int	fill_fields_from_lines(char **tab, t_fields *fields)
-{
-	const char	*f[6] = {"NO", "SO", "WE", "EA", "F", "C"};
-	int			i;
-	int			k;
-
-	i = 0;
-	while (tab[i])
-	{
-		k = 0;
-		while (tab[i][k] && (tab[i][k] <= 32))
-			k++;
-		if (is_map_line(tab[i]))
-			break ;
-		if (ft_strlen(tab[i] + k) > 0)
-			assign_field_value(tab[i], k, fields, f);
-		i++;
-	}
-	return (i);
-}
 
 char	*find_map_start_ptr(char *file_content)
 {

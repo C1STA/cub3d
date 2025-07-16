@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/12 01:12:44 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/16 01:06:36 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void		cleanup_mlx(t_fields *fields);
 
 /* Parse fields functions */
 int			parse(char *filename, t_fields *fields);
-int			parse_fields(char **tab);
+int			parse_fields(char **tab, t_fields *fields);
 int			check_required_field(char **tab, t_fields *fields);
 int			find_map_start(char **tab);
 int			fields_is_present(char **tab, const char *field, t_fields *fields);
@@ -215,9 +215,6 @@ int			validate_map_content(char *map_start_ptr, char *last_valid_line);
 int			check_empty_lines_in_map(char *file_content);
 int			is_line_empty(char *line_start, char *line_end);
 
-void		assign_field_value(char *line, int k, t_fields *fields,
-				const char **f);
-int			fill_fields_from_lines(char **tab, t_fields *fields);
 char		*find_map_start_ptr(char *file_content);
 int			line_has_map_chars(char *line_start, char *line_end);
 char		*find_last_valid_line(char *map_start_ptr);

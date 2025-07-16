@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:20:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/12 01:13:19 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/16 00:53:39 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,13 @@ int	is_line_empty(char *line_start, char *line_end)
 int	validate_map_content(char *map_start_ptr, char *last_valid_line)
 {
 	char	*line_start;
+	char	*end_ptr;
 
 	line_start = map_start_ptr;
-	while (*map_start_ptr && (last_valid_line == NULL
-			|| map_start_ptr <= last_valid_line))
+	end_ptr = map_start_ptr;
+	while (*end_ptr)
+		end_ptr++;
+	while (map_start_ptr < end_ptr)
 	{
 		if (*map_start_ptr == '\n')
 		{
