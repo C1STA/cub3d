@@ -41,8 +41,8 @@ static char	**prepare_file_content(char *filename)
 static int	validate_required_fields(t_fields *fields, char **tab)
 {
 	if (!fields->no_filename || !fields->so_filename || !fields->we_filename
-		|| !fields->ea_filename || fields->floor[0] == -1 || fields->core[0] ==
-		-1)
+		|| !fields->ea_filename || fields->floor[0] == -1
+		|| fields->core[0] == -1)
 	{
 		ft_putstr_fd("Error\nMissing required field(s)\n", 2);
 		free_strs(tab);

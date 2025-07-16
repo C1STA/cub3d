@@ -6,7 +6,7 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/07/12 01:12:54 by dpinto           ###   ########.fr        #
+#    Updated: 2025/07/16 04:00:33 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ SRCS = srcs/main.c \
        srcs/parse_map_validation2.c \
        srcs/parse_map_validation3.c \
        srcs/parse_utils1.c \
+       srcs/parse_utils.c \
        srcs/parse_utils2.c \
        srcs/parse_utils3.c \
        srcs/map_check.c \
