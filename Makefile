@@ -32,8 +32,10 @@ SRCS = srcs/main.c \
        srcs/window_texture.c \
        srcs/parse_fields_utils2.c \
        srcs/raycasting.c \
+       srcs/raycasting_calc.c \
        srcs/raycasting_texture.c \
        srcs/raycasting_draw.c \
+       srcs/raycasting_utils.c \
        srcs/movement.c \
        srcs/movement_utils.c \
        srcs/movement_utils2.c

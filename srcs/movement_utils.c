@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 02:10:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/28 02:22:45 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/10 23:43:08 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,33 @@ static int	check_bounds(t_fields *fields, double next_x, double next_y)
 		|| next_y >= fields->map->height);
 }
 
+static int	is_wall_at_position(t_fields *fields, double x, double y)
+{
+	int	check_x;
+	int	check_y;
+
+	check_x = (int)x;
+	check_y = (int)y;
+	if (check_x >= 0 && check_x < fields->map->width && check_y >= 0
+		&& check_y < fields->map->height
+		&& fields->map->grid[check_y][check_x] == '1')
+		return (1);
+	return (0);
+}
+
 static int	check_wall_collision(t_fields *fields, double next_x, double next_y)
 {
-	return (fields->map->grid[(int)next_y][(int)next_x] == '1'
-		|| fields->map->grid[(int)(next_y + WALL_MARGIN)][(int)next_x] == '1'
-		|| fields->map->grid[(int)(next_y - WALL_MARGIN)][(int)next_x] == '1'
-		|| fields->map->grid[(int)next_y][(int)(next_x + WALL_MARGIN)] == '1'
-		|| fields->map->grid[(int)next_y][(int)(next_x - WALL_MARGIN)] == '1');
+	if (is_wall_at_position(fields, next_x, next_y))
+		return (1);
+	if (is_wall_at_position(fields, next_x, next_y + WALL_MARGIN))
+		return (1);
+	if (is_wall_at_position(fields, next_x, next_y - WALL_MARGIN))
+		return (1);
+	if (is_wall_at_position(fields, next_x + WALL_MARGIN, next_y))
+		return (1);
+	if (is_wall_at_position(fields, next_x - WALL_MARGIN, next_y))
+		return (1);
+	return (0);
 }
 
 int	check_collision(t_fields *fields, double next_x, double next_y)

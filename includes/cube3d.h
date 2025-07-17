@@ -170,6 +170,14 @@ int			handle_rotation(int keycode, t_fields *fields);
 /* Raycasting functions */
 void		cast_rays(t_fields *fields, t_ray *ray);
 
+/* Raycasting utils functions */
+void		init_ray_dir(t_ray *ray, t_fields *fields, int x);
+void		init_dda_steps(t_ray *ray);
+void		perform_dda(t_ray *ray, t_fields *fields);
+
+/* Raycasting calc functions */
+void		calculate_wall_height(t_ray *ray);
+
 /* Raycasting texture functions */
 void		my_mlx_pixel_put(t_img *img, int x, int y, int color);
 int			get_texture_color(void *texture, int tex_x, int tex_y);

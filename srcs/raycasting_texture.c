@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 05:14:18 by dpinto            #+#    #+#             */
-/*   Updated: 2025/05/28 05:37:07 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/09 01:41:05 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 {
 	char	*dst;
 
+	if (x < 0 || x >= WINDOW_WIDTH || y < 0 || y >= WINDOW_HEIGHT)
+		return ;
 	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
 	*(unsigned int *)dst = color;
 }
@@ -28,7 +30,13 @@ int	get_texture_color(void *texture, int tex_x, int tex_y)
 	int		line_length;
 	int		endian;
 
+	if (!texture)
+		return (0);
 	addr = mlx_get_data_addr(texture, &bits_per_pixel, &line_length, &endian);
+	if (!addr)
+		return (0);
+	if (tex_x < 0 || tex_y < 0)
+		return (0);
 	return (*(unsigned int *)(addr + (tex_y * line_length + tex_x
 			* (bits_per_pixel / 8))));
 }
