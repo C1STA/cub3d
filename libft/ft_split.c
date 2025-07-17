@@ -100,6 +100,8 @@ char	**ft_split(char const *s, char c)
 	char	**tab;
 	int		tab_len;
 
+	if (!s)
+		return (NULL);
 	tab_len = get_tab_len(s, c) + 1;
 	tab = (char **)malloc(sizeof(char *) * (tab_len));
 	if (tab == NULL)

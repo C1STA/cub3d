@@ -17,6 +17,8 @@ static int	process_field_line(char *line, const char *field, t_fields *fields)
 	char	**raws;
 	int		result;
 
+	while (*line && *line <= 32)
+		line++;
 	raws = ft_split(line, ' ');
 	if (!raws)
 		return (0);
@@ -58,6 +60,7 @@ int	fields_is_present(char **tab, const char *field, t_fields *fields)
 static int	field_is_dup(char **tab, const char *field)
 {
 	int		i;
+	int		j;
 	int		result;
 	char	**raws;
 
@@ -65,7 +68,12 @@ static int	field_is_dup(char **tab, const char *field)
 	result = 0;
 	while (tab[i])
 	{
-		raws = ft_split(tab[i], ' ');
+		j = 0;
+		while (tab[i][j] && tab[i][j] <= 32)
+			j++;
+		if (!tab[i][j])
+			return (0);
+		raws = ft_split(tab[i] + j, ' ');
 		if (!raws)
 			return (1);
 		if (!ft_strncmp(raws[0], field, ft_strlen(field) + 1))
@@ -98,7 +106,7 @@ int	check_map_line(char *line, int fields_found)
 	int	j;
 
 	j = 0;
-	while (line[j] && line[j] == ' ')
+	while (line[j] && line[j] <= 32)
 		j++;
 	if (line[j] == '1' || line[j] == '0')
 	{
