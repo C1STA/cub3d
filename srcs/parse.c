@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 04:30:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/16 04:13:53 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/18 06:01:18 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,15 @@ static int	validate_required_fields(t_fields *fields, char **tab)
 static int	validate_final_map(t_fields *fields, char **tab)
 {
 	if (find_player_in_map(fields->map))
+	{
+		free_strs(tab);
 		return (1);
+	}
 	if (check_player_position(fields->map))
+	{
+		free_strs(tab);
 		return (1);
+	}
 	if (parse_validate_map(fields->map))
 	{
 		free_strs(tab);

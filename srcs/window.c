@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:42:45 by dpinto            #+#    #+#             */
-/*   Updated: 2025/06/02 03:19:06 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/18 06:32:28 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,32 +15,28 @@
 void		init_ray_values(t_ray *ray, t_fields *fields);
 int			load_textures(t_fields *fields);
 
-static int	handle_close(t_fields *fields)
-{
-	mlx_loop_end(fields->mlx);
-	return (0);
-}
-
-static int	handle_keypress(int keycode, t_fields *fields)
-{
-	if (keycode == XK_Escape)
-		mlx_loop_end(fields->mlx);
-	else
-		handle_movement(keycode, fields);
-	return (0);
-}
-
 static int	init_mlx_resources(t_fields *fields)
 {
+	int	window_width;
+	int	window_height;
+
 	fields->mlx = mlx_init();
 	if (!fields->mlx)
+		return (1);
+	window_width = WINDOW_WIDTH;
+	window_height = WINDOW_HEIGHT;
+	if (window_width <= 0)
+		window_width = 800;
+	if (window_height <= 0)
+		window_height = 600;
+	if (limit_window_size(fields->mlx, &window_width, &window_height))
 		return (1);
 	if (load_textures(fields))
 	{
 		ft_putstr_fd("Error loading textures\n", 2);
 		return (1);
 	}
-	fields->win = mlx_new_window(fields->mlx, WINDOW_WIDTH, WINDOW_HEIGHT,
+	fields->win = mlx_new_window(fields->mlx, window_width, window_height,
 			"Cub3D");
 	if (!fields->win)
 		return (1);

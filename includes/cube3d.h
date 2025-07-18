@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:34:38 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/16 03:29:10 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/18 06:31:26 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 
 # define MAP_CHARS "01NSEW "
 # define VALID_PLAYER "NSEW"
-# define WINDOW_WIDTH 1280
-# define WINDOW_HEIGHT 720
+# define WINDOW_WIDTH 1024
+# define WINDOW_HEIGHT 768
 
 /* Movement constants */
 # define MOVE_SPEED 0.08
@@ -134,7 +134,7 @@ int			validate_character_at_position(t_map *map, int i, int j, char c);
 int			is_empty_line(const char *line);
 
 /* Parse fields utils */
-void		fill_color(int *color, char *str);
+int			fill_color(int *color, char *str);
 void		fill_texture(char **dest, char *src);
 int			fill_fields(t_fields *fields, char **raws, const char *field);
 
@@ -164,6 +164,12 @@ void		print_fields(t_fields *fields);
 
 /* Window functions */
 int			init_window(t_fields *fields);
+
+/* Window utils functions */
+int			get_screen_size(void *mlx, int *width, int *height);
+int			limit_window_size(void *mlx, int *width, int *height);
+int			handle_close(t_fields *fields);
+int			handle_keypress(int keycode, t_fields *fields);
 
 /* Movement functions */
 int			handle_movement(int keycode, t_fields *fields);

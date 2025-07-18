@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:20:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/16 04:13:53 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/18 06:39:53 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	validate_map_content(char *map_start_ptr, char *last_valid_line)
 	char	*line_start;
 	char	*end_ptr;
 
+	(void)last_valid_line;
 	line_start = map_start_ptr;
 	end_ptr = map_start_ptr;
 	while (*end_ptr)
@@ -62,5 +63,6 @@ int	check_empty_lines_in_map(char *file_content)
 	if (!map_start_ptr)
 		return (0);
 	last_valid_line = find_last_valid_line(map_start_ptr);
+	(void)last_valid_line;
 	return (validate_map_content(map_start_ptr, last_valid_line));
 }

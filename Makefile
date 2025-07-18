@@ -6,13 +6,13 @@
 #    By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/26 16:26:07 by dpinto            #+#    #+#              #
-#    Updated: 2025/07/16 04:00:33 by dpinto           ###   ########.fr        #
+#    Updated: 2025/07/18 06:37:41 by dpinto           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = cc
-# CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g
 MLX_FLAGS = -Lmlx -lmlx -L/usr/lib -lXext -lX11 -lm
 
 SRCS = srcs/main.c \
@@ -35,6 +35,7 @@ SRCS = srcs/main.c \
        srcs/file_utils.c \
        srcs/print_fields.c \
        srcs/window.c \
+       srcs/window_utils.c \
        srcs/window_init.c \
        srcs/window_texture.c \
        srcs/raycasting.c \

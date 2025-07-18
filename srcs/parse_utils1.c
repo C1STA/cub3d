@@ -6,7 +6,7 @@
 /*   By: dpinto <dpinto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 00:55:00 by dpinto            #+#    #+#             */
-/*   Updated: 2025/07/16 04:01:23 by dpinto           ###   ########.fr       */
+/*   Updated: 2025/07/18 05:55:05 by dpinto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	init_found_array(int *found)
 	found[5] = 0;
 }
 
-static void	fill_field_by_index(int j, char *value, t_fields *fields)
+static int	fill_field_by_index(int j, char *value, t_fields *fields)
 {
 	if (j == 0)
 		fill_texture(&fields->no_filename, value);
@@ -33,9 +33,16 @@ static void	fill_field_by_index(int j, char *value, t_fields *fields)
 	else if (j == 3)
 		fill_texture(&fields->ea_filename, value);
 	else if (j == 4)
-		fill_color(fields->floor, value);
+	{
+		if (fill_color(fields->floor, value))
+			return (1);
+	}
 	else if (j == 5)
-		fill_color(fields->core, value);
+	{
+		if (fill_color(fields->core, value))
+			return (1);
+	}
+	return (0);
 }
 
 static int	process_valid_field(int j, int *found, char *value,
@@ -47,7 +54,8 @@ static int	process_valid_field(int j, int *found, char *value,
 		return (-1);
 	}
 	found[j] = 1;
-	fill_field_by_index(j, value, fields);
+	if (fill_field_by_index(j, value, fields))
+		return (-1);
 	return (0);
 }
 
