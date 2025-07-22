@@ -1,1 +1,0 @@
-timeout 5 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=mlx.supp --log-file=valgrind_full.txt ./cub3D map.cub
