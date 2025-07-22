@@ -25,10 +25,6 @@ SRCS = srcs/main.c \
        srcs/parse_utils1.c \
        srcs/parse_utils.c \
        srcs/parse_utils2.c \
-       srcs/map_check.c \
-       srcs/map_utils.c \
-       srcs/validate.c \
-       srcs/validate_walls.c \
        srcs/helper.c \
        srcs/helper_free.c \
        srcs/file_utils.c \

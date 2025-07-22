@@ -141,19 +141,6 @@ int			check_comma_validity(char *str, int i, int comma_count);
 void		validate_character(char c, int i, char *str, int *comma_count);
 int			validate_color_format(char *str);
 
-/* Map utils */
-int			get_map_dimensions(char **tab, int start, t_map *map);
-char		*pad_line(char *line, int width);
-int			copy_map(char **tab, int start, t_map *map);
-
-/* Validation functions */
-int			validate_colors(t_fields *fields);
-int			validate_textures(t_fields *fields);
-int			check_walls(t_map *map, int i, int j);
-
-/* Map check functions */
-int			check_map_chars(t_map *map);
-
 /* Window functions */
 int			init_window(t_fields *fields);
 
