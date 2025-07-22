@@ -23,13 +23,20 @@ static char	*read_file_content(int fd, char *str)
 	{
 		count = read(fd, buf, 49);
 		if (count == -1)
-			return (free(str), NULL);
+			return (free(str), ft_putstr_fd("Error\n\
+Failed to read file\n", 2), NULL);
 		buf[count] = '\0';
 		tmp = str;
 		str = ft_strjoin(str, buf);
 		free(tmp);
+		if (count == 0 && !*str)
+		{
+			if (str)
+				free(str);
+			return (ft_putstr_fd("Error\nFile is empty\n", 2), NULL);
+		}
 		if (!str)
-			return (NULL);
+			return (ft_putstr_fd("Error\nAllocation failed\n", 2), NULL);
 	}
 	return (str);
 }
@@ -41,10 +48,10 @@ char	*input_to_str(char *filename)
 
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
-		return (ft_putstr_fd("Error\nfailed to open file\n", 2), NULL);
+		return (ft_putstr_fd("Error\nFailed to open file\n", 2), NULL);
 	str = ft_strdup("");
 	if (!str)
-		return (NULL);
+		return (close(fd), ft_putstr_fd("Error\nAllocation failed\n", 2), NULL);
 	str = read_file_content(fd, str);
 	close(fd);
 	return (str);

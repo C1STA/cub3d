@@ -12,6 +12,47 @@
 
 #include "cube3d.h"
 
+int	is_line_empty(char *line_start, char *line_end)
+{
+	char	*check_ptr;
+
+	check_ptr = line_start;
+	while (check_ptr < line_end)
+	{
+		if (*check_ptr != ' ' && *check_ptr != '\t')
+			return (0);
+		check_ptr++;
+	}
+	return (1);
+}
+
+int	validate_map_content(char *map_start_ptr)
+{
+	char	*line_start;
+	char	*end_ptr;
+
+	line_start = map_start_ptr;
+	end_ptr = map_start_ptr;
+	while (*end_ptr)
+		end_ptr++;
+	while (map_start_ptr < end_ptr)
+	{
+		if (*map_start_ptr == '\n')
+		{
+			if (is_line_empty(line_start, map_start_ptr))
+			{
+				ft_putstr_fd("Error\nEmpty line inside map\n", 2);
+				return (1);
+			}
+			map_start_ptr++;
+			line_start = map_start_ptr;
+		}
+		else
+			map_start_ptr++;
+	}
+	return (0);
+}
+
 char	*find_map_start_ptr(char *file_content)
 {
 	char	*map_start_ptr;
@@ -33,41 +74,12 @@ char	*find_map_start_ptr(char *file_content)
 	return (map_start_ptr);
 }
 
-int	line_has_map_chars(char *line_start, char *line_end)
+int	check_empty_lines_in_map(char *file_content)
 {
-	char	*check_ptr;
+	char	*map_start_ptr;
 
-	check_ptr = line_start;
-	while (check_ptr < line_end)
-	{
-		if (*check_ptr == '1' || *check_ptr == '0' || *check_ptr == 'N'
-			|| *check_ptr == 'S' || *check_ptr == 'E' || *check_ptr == 'W')
-			return (1);
-		check_ptr++;
-	}
-	return (0);
-}
-
-char	*find_last_valid_line(char *map_start_ptr)
-{
-	char	*temp_ptr;
-	char	*temp_line_start;
-	char	*last_valid_line;
-
-	last_valid_line = NULL;
-	temp_ptr = map_start_ptr;
-	temp_line_start = temp_ptr;
-	while (*temp_ptr)
-	{
-		if (*temp_ptr == '\n')
-		{
-			if (line_has_map_chars(temp_line_start, temp_ptr))
-				last_valid_line = temp_ptr;
-			temp_ptr++;
-			temp_line_start = temp_ptr;
-		}
-		else
-			temp_ptr++;
-	}
-	return (last_valid_line);
+	map_start_ptr = find_map_start_ptr(file_content);
+	if (!map_start_ptr)
+		return (ft_putstr_fd("Error\nDescription map not found\n", 2), 1);
+	return (validate_map_content(map_start_ptr));
 }

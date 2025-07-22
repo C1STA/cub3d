@@ -201,15 +201,10 @@ void		cleanup_loaded_textures(t_fields *fields);
 int			load_textures(t_fields *fields);
 
 int			is_map_line(const char *line);
-int			check_field_identifier(char *line, int k, int *found,
-				const char **f);
-int			validate_field_line(char *line, int *found, const char **f);
-int			validate_map_content(char *map_start_ptr, char *last_valid_line);
+int			validate_map_content(char *map_start_ptr);
 int			check_empty_lines_in_map(char *file_content);
 int			is_line_empty(char *line_start, char *line_end);
 
 char		*find_map_start_ptr(char *file_content);
-int			line_has_map_chars(char *line_start, char *line_end);
-char		*find_last_valid_line(char *map_start_ptr);
 
 #endif

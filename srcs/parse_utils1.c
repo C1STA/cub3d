@@ -63,11 +63,19 @@ static int	process_field_line(char *line, int k, int *found, t_fields *fields)
 {
 	const char	*f[6] = {"NO", "SO", "WE", "EA", "F", "C"};
 	int			j;
+	char		tmp[4];
 
+	j = 0;
+	while ((line + k)[j] && (line + k)[j] > 32 && j < 3)
+	{
+		tmp[j] = (line + k)[j];
+		j++;
+	}
+	tmp[j] = '\0';
 	j = 0;
 	while (j < 6)
 	{
-		if (!ft_strncmp(line + k, f[j], ft_strlen(f[j])))
+		if (!ft_strncmp(tmp, f[j], ft_strlen(f[j]) + 1))
 		{
 			if (j < 4)
 				return (process_valid_field(j, found, line + k + 2, fields));
@@ -76,10 +84,8 @@ static int	process_field_line(char *line, int k, int *found, t_fields *fields)
 		}
 		j++;
 	}
-	ft_putstr_fd("Error\nInvalid identifier: ", 2);
-	ft_putstr_fd(line + k, 2);
-	ft_putstr_fd("\n", 2);
-	return (-1);
+	return (ft_putstr_fd("Error\nInvalid identifier: ", 2), \
+ft_putstr_fd(line + k, 2), ft_putstr_fd("\n", 2), -1);
 }
 
 int	parse_fields(char **tab, t_fields *fields)
@@ -104,5 +110,5 @@ int	parse_fields(char **tab, t_fields *fields)
 		}
 		i++;
 	}
-	return (-1);
+	return (0);
 }
