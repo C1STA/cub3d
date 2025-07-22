@@ -25,10 +25,10 @@ static int	init_mlx_resources(t_fields *fields)
 		return (1);
 	window_width = WINDOW_WIDTH;
 	window_height = WINDOW_HEIGHT;
-	if (window_width <= 0)
-		window_width = 800;
-	if (window_height <= 0)
-		window_height = 600;
+	if (window_width <= 0 || window_width > 1920)
+		return (ft_putstr_fd("Error\nInvalid resolution\n", 2), 1);
+	if (window_height <= 0 || window_height > 1080)
+		return (ft_putstr_fd("Error\nInvalid resolution\n", 2), 1);
 	if (limit_window_size(fields->mlx, &window_width, &window_height))
 		return (1);
 	if (load_textures(fields))
