@@ -33,7 +33,7 @@ static int	init_mlx_resources(t_fields *fields)
 		return (1);
 	if (load_textures(fields))
 	{
-		ft_putstr_fd("Error loading textures\n", 2);
+		ft_putstr_fd("Error\nUnable to load texture(s)\n", 2);
 		return (1);
 	}
 	fields->win = mlx_new_window(fields->mlx, window_width, window_height,
