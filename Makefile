@@ -12,7 +12,7 @@
 
 NAME = cub3D
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror
 MLX_FLAGS = -Lmlx -lmlx -L/usr/lib -lXext -lX11 -lm
 
 SRCS = srcs/main.c \
@@ -33,7 +33,6 @@ SRCS = srcs/main.c \
        srcs/helper.c \
        srcs/helper_free.c \
        srcs/file_utils.c \
-       srcs/print_fields.c \
        srcs/window.c \
        srcs/window_utils.c \
        srcs/window_init.c \

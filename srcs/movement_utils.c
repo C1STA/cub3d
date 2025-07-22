@@ -13,10 +13,6 @@
 #include "../includes/cube3d.h"
 #include <math.h>
 
-#define MOVE_SPEED 0.08
-#define ROT_SPEED 0.05
-#define WALL_MARGIN 0.3
-
 void	rotate_player(t_ray *ray, double rot_speed)
 {
 	double	old_dir_x;

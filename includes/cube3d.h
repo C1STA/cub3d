@@ -30,7 +30,7 @@
 /* Movement constants */
 # define MOVE_SPEED 0.08
 # define ROT_SPEED 0.05
-# define WALL_MARGIN 0.3
+# define WALL_MARGIN 0.1
 
 typedef struct s_map
 {
@@ -118,7 +118,6 @@ char		*input_to_str(char *filename);
 /* Helper init functions */
 void		init_fields(t_fields *fields);
 void		free_fields(t_fields *fields);
-void		cleanup_mlx(t_fields *fields);
 
 /* Parse fields functions */
 int			parse(char *filename, t_fields *fields);
@@ -136,7 +135,6 @@ int			is_empty_line(const char *line);
 /* Parse fields utils */
 int			fill_color(int *color, char *str);
 void		fill_texture(char **dest, char *src);
-int			fill_fields(t_fields *fields, char **raws, const char *field);
 
 /* Color utils */
 int			check_comma_validity(char *str, int i, int comma_count);
@@ -155,12 +153,6 @@ int			check_walls(t_map *map, int i, int j);
 
 /* Map check functions */
 int			check_map_chars(t_map *map);
-
-/* Map parsing functions */
-int			parse_map(char **tab, int start_idx, t_fields *fields);
-
-/* Print functions */
-void		print_fields(t_fields *fields);
 
 /* Window functions */
 int			init_window(t_fields *fields);
