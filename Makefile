@@ -12,7 +12,7 @@
 
 NAME = cub3D
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -std=gnu17
 MLX_FLAGS = -Lmlx -lmlx -L/usr/lib -lXext -lX11 -lm
 
 SRCS = srcs/main.c \

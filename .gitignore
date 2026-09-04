@@ -1,0 +1,16 @@
+# Build outputs
+cub3D
+*.o
+*.a
+
+# Editor and language-server files
+.cache/
+.clangd/
+.vscode/
+.zed/
+compile_commands.json
+
+# Debug and system files
+*.supp
+*.log
+.DS_Store
